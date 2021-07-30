@@ -1,0 +1,34 @@
+body {
+    background-color: #b3e0ff;
+}
+
+.post {
+    background-color: white;
+    margin: auto;
+    margin-top: 2rem;
+    max-width: 60rem;
+    border-radius: 1rem;
+    box-shadow: 0px 4px 1px rgba(0, 0, 0, 0.25);
+    padding: 2rem;
+}
+
+.content {
+    margin: auto;
+    padding: 1rem;
+}
+
+.info-box {
+    background-color: grey;
+    color: white;
+    border-radius: 1rem;
+    box-shadow: 0px 4px 1px rgba(0, 0, 0, 0.25);
+    padding: 2rem;
+}
+
+.btn-group {
+    padding: 1rem;
+}
+
+.btn {
+    margin-bottom: 2rem;
+}

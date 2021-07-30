@@ -1,0 +1,19 @@
+body {
+  background-color: #b3e0ff;
+}
+
+.form-pad {
+  padding: 1rem;
+}
+
+.form-post {
+  background-color: white;
+  margin: auto;
+  margin-top: 2rem;
+  max-width: 50rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border-style: solid;
+  border-color: white;
+  box-shadow: 0px 4px 1px rgba(0, 0, 0, 0.25);
+}

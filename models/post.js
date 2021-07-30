@@ -26,6 +26,10 @@ const PostSchema = new mongoose.Schema(
       type: Array,
       required: false,
     },
+    flags: {
+      type: Array,
+      required: false
+    },
     location: {
       label: {
         type: String,

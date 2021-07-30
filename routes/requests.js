@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/user");
 const Post = require("../models/post");
 const Request = require("../models/request");
+const archivedPost = reqiure("../models/archivedpost");
 const { request } = require("express");
 
 //CREATE REQUEST
@@ -222,8 +223,31 @@ router.post("/success/:id", async (req, res) => {
 
     p1().then(() =>
       p2().then(async () => {
+        const post = await Post.findById(req.params.id)
+        const oldId = post._id;
+        const originalDate = post.updatedAt;
+        const title = post.title;
+        const desc = post.desc;
+        const userid = post.id;
+        const category = post.category;
+        const image = post.image;
+        const location = {
+          label: post.location.label,
+          lat: Number(post.location.lat),
+          lon: Number(post.location.lon),
+        };
+        await archivedPost.create({
+          oldId,
+          originalDate,
+          title,
+          desc,
+          userid,
+          category,
+          image,
+          location,
+        });
         await Post.findByIdAndDelete(req.params.id);
-        res.status(200).json("We did it!");
+        res.status(200).json("Success!");
       })
     );
   } catch (err) {

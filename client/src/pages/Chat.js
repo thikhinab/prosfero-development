@@ -58,14 +58,11 @@ const Chat = () => {
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await axios.get(
-          `api/v1/conversations/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
+        const res = await axios.get(`api/v1/conversations/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setConversations(res.data);
       } catch (err) {
         console.log(err);
@@ -77,14 +74,11 @@ const Chat = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get(
-          `api/v1/messages/${currentChat?._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
+        const res = await axios.get(`api/v1/messages/${currentChat?._id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setMessages(res.data);
       } catch (err) {
         console.log(err);

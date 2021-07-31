@@ -32,9 +32,19 @@ const ArchivedPostSchema = new mongoose.Schema(
       type: String,
       required: false
     },
-    requests: {
-      type: Array,
-      required: false
+    location: {
+      label: {
+        type: String,
+        required: true,
+      },
+      lat: {
+        type: Number,
+        required: true,
+      },
+      lon: {
+        type: Number,
+        required: true,
+      },
     }
   },
   { 

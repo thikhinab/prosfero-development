@@ -51,7 +51,12 @@ const userSchema = new mongoose.Schema(
             required: false
         },
         telebot: {
-            type: String
+            type: String,
+            default: ""
+        },
+        botcategories: {
+            type: Array,
+            required: false
         }
 }, {
         collection: 'users',

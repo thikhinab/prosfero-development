@@ -82,6 +82,20 @@ app.use(
   botRouter
 );
 
+const archiveRouter = require("./routes/archivedposts");
+app.use(
+  "/api/v1/archive",
+  passport.authenticate("jwt", { session: false }),
+  archiveRouter
+);
+
+const adminRouter = require("./routes/admin");
+app.use(
+  "/api/v1/admin",
+  passport.authenticate("jwt", { session: false }),
+  adminRouter
+);
+
 // For testing
 app.use(express.static("./client/build"));
 app.get("/*", (req, res) => {

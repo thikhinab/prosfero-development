@@ -352,4 +352,30 @@ router.post("/requests/:id", async (req, res) => {
   }
 });
 
+//FLAG POST
+router.post("/flag/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const userid = req.user.id;
+    if ( !post.flags.includes(userid) ){
+      try {
+        const updatedPost = await Post.findByIdAndUpdate(
+          req.params.id,
+          {
+            $push: { flags: userid },
+          },
+          { new: true }
+        );
+        res.status(200).json(updatedPost);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    } else {
+      res.status(401).json("You have already flagged this post!");
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;

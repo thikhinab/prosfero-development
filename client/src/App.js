@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useMemo, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
@@ -26,25 +28,38 @@ function App() {
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
 
   return (
-    <UserContext.Provider value={value}>
-      <Router>
-        <Switch>
-          <Route path="/login" exact component={Login} />
-          <Route path="/profile" exact component={Profile} />
-          <Route path="/registration" exact component={Registration} />
-          <Route path="/welcome" exact component={Welcome} />
-          <Route path="/createpost" exact component={CreatePost} />
-          <Route path="/home" exact component={Home} />
-          <Route path="/post/:postId" exact component={Post} />
-          <Route path="/editpost/:postId" exact component={EditPost} />
-          <Route path="/chat" exact component={Chat} />
-          <Route path="/requests" exact component={YourRequests} />
-          <Route path="/telebot" exact component={Telebot} />
-          <Route path="/search" component={Search} />
-          <Route path="/" component={WelcomeRouter} />
-        </Switch>
-      </Router>
-    </UserContext.Provider>
+    <>
+      <UserContext.Provider value={value}>
+        <Router>
+          <Switch>
+            <Route path="/login" exact component={Login} />
+            <Route path="/profile" exact component={Profile} />
+            <Route path="/registration" exact component={Registration} />
+            <Route path="/welcome" exact component={Welcome} />
+            <Route path="/createpost" exact component={CreatePost} />
+            <Route path="/home" exact component={Home} />
+            <Route path="/post/:postId" exact component={Post} />
+            <Route path="/editpost/:postId" exact component={EditPost} />
+            <Route path="/chat" exact component={Chat} />
+            <Route path="/requests" exact component={YourRequests} />
+            <Route path="/telebot" exact component={Telebot} />
+            <Route path="/search" component={Search} />
+            <Route path="/" component={WelcomeRouter} />
+          </Switch>
+        </Router>
+      </UserContext.Provider>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
   );
 }
 

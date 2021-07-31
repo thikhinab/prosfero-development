@@ -7,6 +7,7 @@ import { Redirect } from "react-router";
 import "../style/Home.css";
 import Card from "../components/Card";
 import Filter from "../components/Filter";
+import { toast } from "react-toastify";
 
 const LIMIT = 8;
 const BASE_URL = "api/v1/posts";

@@ -51,7 +51,7 @@ const Post = () => {
 
   const [showForm, setShowForm] = useState(false);
 
-  const url = `api/v1/posts/single/${postId}`;
+  const url = `/api/v1/posts/single/${postId}`;
 
   useEffect(() => {
     axios
@@ -62,10 +62,12 @@ const Post = () => {
       })
       .then((res) => {
         console.log(res.data);
+        console.log(res.data, "fdsfadsfsadfdsfsf");
         setState(res.data);
       })
       .catch((err) => {
         alert(err);
+        console.log(err, "fdskjf");
         history.push("/home");
       });
   }, []);

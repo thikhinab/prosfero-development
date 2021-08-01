@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/user");
 const Post = require("../models/post");
 const Request = require("../models/request");
-const archivedPost = reqiure("../models/archivedpost");
+const archivedPost = require("../models/archivedpost");
 const { request } = require("express");
 
 //CREATE REQUEST
@@ -223,7 +223,7 @@ router.post("/success/:id", async (req, res) => {
 
     p1().then(() =>
       p2().then(async () => {
-        const post = await Post.findById(req.params.id)
+        const post = await Post.findById(req.params.id);
         const oldId = post._id;
         const originalDate = post.updatedAt;
         const title = post.title;

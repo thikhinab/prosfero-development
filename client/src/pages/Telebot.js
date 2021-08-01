@@ -1,5 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../utils/UserContext";
+import { Redirect } from "react-router";
 import NavigationBar from "../components/NavigationBar";
 import axios from "axios";
 
@@ -9,7 +10,7 @@ const Telebot = () => {
     category: "",
   });
 
-  const { userInfo, setUserInfo } = useState({})
+  const { userInfo, setUserInfo } = useState({});
   const { user, setUser } = useContext(UserContext);
 
   const url = "api/v1/telebots";
@@ -80,7 +81,7 @@ const Telebot = () => {
       )
       .then((res) => {
         alert("Telegram Username Updated!");
-        console.log(res)
+        console.log(res);
       })
       .catch((err) => alert(err));
   };
@@ -107,18 +108,14 @@ const Telebot = () => {
   };
 
   const generateCategories = (userInfo) => {
-    return (
-      <>
-      {}
-      </>
-    )
-  }
+    return <>{}</>;
+  };
 
   const usernameForm = (userInfo) => {
     if (userInfo.telebot === "") {
       return (
         <>
-        <div className="text-center">
+          <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>
               Set up your telebot!
             </h1>
@@ -167,11 +164,11 @@ const Telebot = () => {
             </button>
           </div>
         </>
-      )
+      );
     } else {
-      return(
+      return (
         <>
-        <div className="text-center">
+          <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>
               Set up your telebot!
             </h1>
@@ -184,16 +181,16 @@ const Telebot = () => {
             <br />
             <br />
             <h8>
-              To get started go to to @prosferobot and run the
-              /start command.
+              To get started go to to @prosferobot and run the /start command.
             </h8>
           </div>
           <br />
           <br />
           <div className="mb-3">
             <h8>
-              If you want to update your telegram username you can do so! All your interested catrgories will 
-              be copied over. You'll need to run /start again.
+              If you want to update your telegram username you can do so! All
+              your interested catrgories will be copied over. You'll need to run
+              /start again.
             </h8>
             <br />
             <br />
@@ -220,9 +217,9 @@ const Telebot = () => {
             </button>
           </div>
         </>
-      )
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -239,19 +236,14 @@ const Telebot = () => {
       />
 
       <div className="form-pad">
-        <form className="form-post">
-          { usernameForm(userInfo) }
-        </form>
+        <form className="form-post">{usernameForm(userInfo)}</form>
       </div>
       <br />
       <div className="container profile">
         Your current <i>Interested</i> categories
         <br />
-        {userInfo.botcategories && userInfo.botcategories.map((cat) =>
-         <div>
-           {cat}
-         </div>
-        )}
+        {userInfo.botcategories &&
+          userInfo.botcategories.map((cat) => <div>{cat}</div>)}
       </div>
       <br />
       <div className="form-pad">

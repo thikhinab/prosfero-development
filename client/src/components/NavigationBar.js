@@ -12,7 +12,7 @@ const NavigationBar = ({ loggedin, func: logout, admin }) => {
 
   const submit = (e) => {
     e.preventDefault();
-    if (!searchString.replace(/\s/g, "").length || searchString !== "") {
+    if (searchString.replace(/\s/g, "").length === 0 && !searchString === "") {
       return history.push(`/search?q=${searchString}`);
     }
   };

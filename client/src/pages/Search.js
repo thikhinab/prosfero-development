@@ -25,6 +25,10 @@ const Search = () => {
     id: "latest",
   });
 
+  const escapeRegExpChars = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
   const params = new URLSearchParams(document.location.search.substring(1));
   const query = params.get("q");
 
@@ -39,7 +43,7 @@ const Search = () => {
     instance
       .get(`/filter`, {
         params: {
-          q: query,
+          q: escapeRegExpChars(query),
           limit: LIMIT,
           skip: skip,
           order: parseInt(sortOrder.value),

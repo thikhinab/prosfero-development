@@ -112,7 +112,7 @@ const Telebot = () => {
   };
 
   const usernameForm = (userInfo) => {
-    if (userInfo.telebot === "") {
+    if (userInfo?.telebot === "") {
       return (
         <>
           <div className="text-center">

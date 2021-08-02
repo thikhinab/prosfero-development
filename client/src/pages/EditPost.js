@@ -7,6 +7,7 @@ import { Redirect } from "react-router";
 import { useHistory, useParams } from "react-router-dom";
 import LocationSelect from "../components/LocationSelect";
 import { FetchLocations } from "../utils/FetchLocations";
+import { toast } from "react-toastify";
 
 const EditPost = () => {
   const { postId } = useParams();
@@ -18,6 +19,7 @@ const EditPost = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const getSuggestions = async (word) => {
     if (word) {
@@ -51,14 +53,13 @@ const EditPost = () => {
       })
       .then((res) => {
         if (res.data.userid !== user.id) {
-          alert("Unathorized");
+          toast.error("Unathorized");
           history.push("/home");
         }
         setState(res.data);
       })
       .catch((err) => {
-        console.log(err);
-        alert(err);
+        toast.erro(err);
         history.push("/home");
       });
   }, []);
@@ -78,6 +79,7 @@ const EditPost = () => {
 
   const uploadImage = async (e) => {
     e.preventDefault();
+    setUploading(true);
 
     if (image.file !== null || image.file !== undefined) {
       const files = image.file;
@@ -92,13 +94,13 @@ const EditPost = () => {
           const newState = { ...state };
           newState["image"] = file.secure_url;
           setState(newState);
+          setUploading(false);
         })
         .catch((err) => {
-          console.log(err);
-          alert(err);
+          toast.error(err);
         });
     } else {
-      alert("Please select an Image");
+      toast.error("Please select an Image");
     }
   };
 
@@ -108,30 +110,63 @@ const EditPost = () => {
     setState(newState);
   };
 
+  const validation = () => {
+    let bool = true;
+
+    if (state.title === "") {
+      toast.error("Please enter the title");
+      bool = false;
+    }
+
+    if (state.category === "") {
+      toast.error("Please choose a category");
+      bool = false;
+    }
+
+    if (state.location?.label === "") {
+      toast.error("Please select a location");
+      bool = false;
+    }
+
+    if (state.desc === "") {
+      toast.error("Please enter the description");
+      bool = false;
+    }
+
+    if (state.image === "") {
+      toast.error("Please upload the image");
+      bool = false;
+    }
+
+    return bool;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .put(
-        editURL,
-        {
-          title: state.title,
-          desc: state.desc,
-          category: state.category,
-          image: state.image,
-          location: state.location,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (validation()) {
+      axios
+        .put(
+          editURL,
+          {
+            title: state.title,
+            desc: state.desc,
+            category: state.category,
+            image: state.image,
+            location: state.location,
           },
-        }
-      )
-      .then((res) => {
-        alert("Post updated!");
-        history.push(`/post/${postId}`);
-      })
-      .catch((err) => alert(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success("Post updated!");
+          history.push(`/post/${postId}`);
+        })
+        .catch((err) => toast.error(err));
+    }
   };
 
   if (!user.token || user.expired) {
@@ -159,7 +194,21 @@ const EditPost = () => {
           <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>Edit Post</h1>
           </div>
-          <h3>Title: {state.title}</h3>
+          <div className="mb-3">
+            <label htmlFor="title" className="form-label">
+              Title
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              autoComplete="off"
+              id="title"
+              name="title"
+              onChange={(e) => change(e)}
+              value={state.title}
+              placeholder="Enter the title of your post"
+            />
+          </div>
           <div className="mb-3">
             <select
               className="form-select"
@@ -221,7 +270,17 @@ const EditPost = () => {
               Upload
             </button>
           </div>
-          {state.image && (
+          {uploading && (
+            <>
+              <div className="text-center" style={{ padding: "1rem" }}>
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <div>Uploading...</div>
+              </div>
+            </>
+          )}
+          {state.image && !uploading && (
             <div className="text-center">
               <img
                 src={state.image}

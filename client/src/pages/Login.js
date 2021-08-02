@@ -3,6 +3,7 @@ import { useHistory, Redirect } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
+import { toast } from "react-toastify";
 
 const Login = () => {
   let history = useHistory();
@@ -24,21 +25,26 @@ const Login = () => {
     setState(newState);
   };
 
-  const prescenseCheck = (data, err) => {
-    if (data === "") {
-      alert(err);
-      return false;
+  const validation = () => {
+    let bool = true;
+
+    if (state.username === "") {
+      toast.error("Please enter the username");
+      bool = false;
     }
-    return true;
+
+    if (state.password === "") {
+      toast.error("Please enter the password");
+      bool = false;
+    }
+
+    return bool;
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (
-      prescenseCheck(state.username, "Please enter the username") &&
-      prescenseCheck(state.password, "Please enter the password")
-    ) {
+    if (validation()) {
       axios
         .post(url, {
           username: state.username,
@@ -57,10 +63,10 @@ const Login = () => {
             });
             history.push("/profile");
           } else {
-            alert(res.data.error);
+            toast.error(res.data.error);
           }
         })
-        .catch((err) => alert(err));
+        .catch((err) => toast.error(err));
     }
 
     setState({
@@ -76,7 +82,7 @@ const Login = () => {
       ) : (
         <>
           <NavigationBar loggedin={false} />
-          <form className="login-form">
+          <form className="login-form needs-validation" novalidate>
             <div className="text-center">
               <h1
                 id="login-title"
@@ -94,6 +100,7 @@ const Login = () => {
                 onChange={(e) => change(e)}
                 value={state.username}
               />
+              <div class="invalid-feedback">Looks good!</div>
             </div>
             <div className="mb-3">
               <label className="form-label">Password</label>

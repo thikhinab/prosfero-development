@@ -7,6 +7,7 @@ import { Redirect } from "react-router";
 import { useHistory } from "react-router-dom";
 import { FetchLocations } from "../utils/FetchLocations";
 import LocationSelect from "../components/LocationSelect";
+import { toast } from "react-toastify";
 
 const CreatePost = () => {
   const { user, setUser } = useContext(UserContext);
@@ -30,6 +31,7 @@ const CreatePost = () => {
     lon: "",
     lat: "",
   });
+  const [uploading, setUploading] = useState(false);
 
   const getSuggestions = async (word) => {
     if (word) {
@@ -57,6 +59,7 @@ const CreatePost = () => {
 
   const uploadImage = async (e) => {
     e.preventDefault();
+    setUploading(true);
 
     if (image.file !== null || image.file !== undefined) {
       const files = image.file;
@@ -71,13 +74,14 @@ const CreatePost = () => {
           const newState = { ...state };
           newState["image"] = file.secure_url;
           setState(newState);
+          setUploading(false);
         })
         .catch((err) => {
           console.log(err);
-          alert(err);
+          toast.error(err);
         });
     } else {
-      alert("Please select an Image");
+      toast.error("Please select an Image");
     }
   };
 
@@ -87,34 +91,67 @@ const CreatePost = () => {
     setState(newState);
   };
 
+  const validation = () => {
+    let bool = true;
+
+    if (state.title === "") {
+      toast.error("Please enter the title");
+      bool = false;
+    }
+
+    if (state.category === "") {
+      toast.error("Please choose a category");
+      bool = false;
+    }
+
+    if (selected.label === "") {
+      toast.error("Please select a location");
+      bool = false;
+    }
+
+    if (state.description === "") {
+      toast.error("Please enter the description");
+      bool = false;
+    }
+
+    if (state.image === "") {
+      toast.error("Please upload the image");
+      bool = false;
+    }
+
+    return bool;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(
-        url,
-        {
-          title: state.title,
-          desc: state.description,
-          category: state.category,
-          image: state.image,
-          location: {
-            label: selected.label,
-            lon: selected.lon,
-            lat: selected.lat,
+    if (validation()) {
+      axios
+        .post(
+          url,
+          {
+            title: state.title,
+            desc: state.description,
+            category: state.category,
+            image: state.image,
+            location: {
+              label: selected.label,
+              lon: selected.lon,
+              lat: selected.lat,
+            },
           },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      )
-      .then((res) => {
-        alert("Post submitted!");
-        history.push(`/post/${res.data.id}`);
-      })
-      .catch((err) => alert(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success("Post submitted!");
+          history.push(`/post/${res.data.id}`);
+        })
+        .catch((err) => toast.error(err));
+    }
   };
 
   if (!user.token || user.expired) {
@@ -217,7 +254,17 @@ const CreatePost = () => {
               Upload
             </button>
           </div>
-          {state.image && (
+          {uploading && (
+            <>
+              <div className="text-center" style={{ padding: "1rem" }}>
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <div>Uploading...</div>
+              </div>
+            </>
+          )}
+          {state.image && !uploading && (
             <div className="text-center">
               <img src={state.image} className="img-thumbnail" alt="" />
             </div>

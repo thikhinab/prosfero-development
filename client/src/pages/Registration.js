@@ -3,6 +3,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
+import { toast } from "react-toastify";
 
 const Registration = () => {
   const { setUser } = useContext(UserContext);
@@ -26,31 +27,62 @@ const Registration = () => {
     setState(newState);
   };
 
+  const validation = () => {
+    let bool = true;
+
+    if (state.firstName === "") {
+      toast.error("Please enter the First name");
+      bool = false;
+    }
+
+    if (state.lastName === "") {
+      toast.error("Please enter the Last name");
+      bool = false;
+    }
+    if (state.username === "") {
+      toast.error("Please enter the username");
+      bool = false;
+    }
+    if (state.email === "@" || !state.email.includes("@")) {
+      toast.error("Please enter a valid email");
+      bool = false;
+    }
+
+    if (state.password === "") {
+      toast.error("Please enter the password");
+      bool = false;
+    }
+
+    return bool;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(url, {
-        firstName: state.firstName,
-        lastName: state.lastName,
-        username: state.username,
-        email: state.email,
-        password: state.password,
-      })
-      .then((res) => {
-        console.log(res.data);
-        alert("User Registered!");
-        history.push("/login");
-      })
-      .catch((err) => alert(err));
+    if (validation()) {
+      axios
+        .post(url, {
+          firstName: state.firstName,
+          lastName: state.lastName,
+          username: state.username,
+          email: state.email,
+          password: state.password,
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert("User Registered!");
+          history.push("/login");
+        })
+        .catch((err) => alert(err));
 
-    setState({
-      firstName: "",
-      lastName: "",
-      username: "",
-      email: "",
-      password: "",
-    });
+      setState({
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        password: "",
+      });
+    }
   };
 
   useEffect(() => {

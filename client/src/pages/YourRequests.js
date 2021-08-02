@@ -9,7 +9,7 @@ const YourRequests = () => {
   const { user, setUser } = useContext(UserContext);
   let history = useHistory();
 
-  const url = "api/v1/requests";
+  const url = "/api/v1/requests";
 
   useEffect(() => {
     if (user.token !== null) {
@@ -146,12 +146,15 @@ const YourRequests = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

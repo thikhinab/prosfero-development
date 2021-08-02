@@ -11,8 +11,8 @@ import { FetchLocations } from "../utils/FetchLocations";
 const EditPost = () => {
   const { postId } = useParams();
 
-  const url = `api/v1/posts/single/${postId}`;
-  const editURL = `api/v1/posts/${postId}`;
+  const url = `/api/v1/posts/single/${postId}`;
+  const editURL = `/api/v1/posts/${postId}`;
 
   const [state, setState] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -142,12 +142,15 @@ const EditPost = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

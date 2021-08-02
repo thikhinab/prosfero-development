@@ -58,7 +58,7 @@ const Chat = () => {
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await axios.get(`api/v1/conversations/${user.id}`, {
+        const res = await axios.get(`/api/v1/conversations/${user.id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -105,7 +105,7 @@ const Chat = () => {
 
     try {
       const instance = axios.create({
-        baseURL: `api/v1/messages`,
+        baseURL: `/api/v1/messages`,
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const res = await instance.post(``, message);
@@ -128,12 +128,15 @@ const Chat = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

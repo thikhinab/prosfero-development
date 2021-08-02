@@ -10,7 +10,7 @@ const Registration = () => {
 
   let history = useHistory();
 
-  const url = "api/v1/users/register";
+  const url = "/api/v1/users/register";
 
   const [state, setState] = useState({
     firstName: "",

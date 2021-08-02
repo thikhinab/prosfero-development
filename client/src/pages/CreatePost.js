@@ -11,7 +11,7 @@ import LocationSelect from "../components/LocationSelect";
 const CreatePost = () => {
   const { user, setUser } = useContext(UserContext);
   const history = useHistory();
-  const url = "api/v1/posts";
+  const url = "/api/v1/posts";
   const [image, setImage] = useState({
     file: null,
   });
@@ -125,12 +125,15 @@ const CreatePost = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

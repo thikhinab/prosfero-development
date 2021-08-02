@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 
-const NavigationBar = ({ loggedin, func: logout }) => {
+const NavigationBar = ({ loggedin, func: logout, admin }) => {
   const history = useHistory();
 
   const [searchString, setSearchString] = useState("");
@@ -72,6 +72,14 @@ const NavigationBar = ({ loggedin, func: logout }) => {
                     Post Archive
                   </Link>
                 </li>
+                {admin && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/admin">
+                      Admin
+                    </Link>
+                  </li>
+                )}
+
                 <li className="nav-item">
                   <span
                     className="nav-link"

@@ -11,7 +11,7 @@ const Login = () => {
 
   const { user, setUser } = useContext(UserContext);
 
-  const url = "api/v1/users/login";
+  const url = "/api/v1/users/login";
 
   const [state, setState] = useState({
     username: "",
@@ -48,10 +48,12 @@ const Login = () => {
           if (res.data.error === undefined) {
             localStorage.setItem("prosfero-token", res.data.token);
             localStorage.setItem("prosfero-id", res.data.id);
+            localStorage.setItem("prosfero-admin", res.data.admin);
             setUser({
               token: res.data.token,
               id: res.data.id,
               expired: false,
+              admin: res.data.admin,
             });
             history.push("/profile");
           } else {

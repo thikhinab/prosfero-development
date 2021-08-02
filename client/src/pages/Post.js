@@ -4,6 +4,7 @@ import { UserContext } from "../utils/UserContext";
 import { useParams, useHistory, Link } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
+import { toast } from "react-toastify";
 import "../style/Post.css";
 
 const Post = () => {
@@ -23,7 +24,7 @@ const Post = () => {
     setState(newState);
   };
 
-  const formUrl = `api/v1/posts/requests/${postId}`;
+  const formUrl = `/api/v1/posts/requests/${postId}`;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -72,6 +73,23 @@ const Post = () => {
       });
   }, []);
 
+  const flagPost = () => {
+    const instance = axios.create({
+      baseURL: `/api/v1/posts/flag/${postId}`,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    instance
+      .post()
+      .then((res) => {
+        if (res.status == 200) {
+          toast.info("Post flagged!");
+        }
+      })
+      .catch((err) => toast.error(err.response.data));
+  };
+
   if (!user.token || user.expired) {
     return <Redirect to="/login" />;
   }
@@ -80,12 +98,15 @@ const Post = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />
@@ -131,10 +152,7 @@ const Post = () => {
                     >
                       Request
                     </div>
-                    <div
-                      class="btn btn-danger"
-                      onClick={() => alert("Post flagged")}
-                    >
+                    <div class="btn btn-danger" onClick={() => flagPost()}>
                       Flag
                     </div>
                   </>

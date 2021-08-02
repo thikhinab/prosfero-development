@@ -13,9 +13,9 @@ const Telebot = () => {
   const { userInfo, setUserInfo } = useState({});
   const { user, setUser } = useContext(UserContext);
 
-  const url = "api/v1/telebots";
-  const updateurl = "api/v1/telebots/update";
-  const userurl = "api/v1/profile";
+  const url = "/api/v1/telebots";
+  const updateurl = "/api/v1/telebots/update";
+  const userurl = "/api/v1/profile";
 
   const change = (e) => {
     const newState = { ...state };
@@ -225,16 +225,18 @@ const Telebot = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />
-
       <div className="form-pad">
         <form className="form-post">{usernameForm(userInfo)}</form>
       </div>

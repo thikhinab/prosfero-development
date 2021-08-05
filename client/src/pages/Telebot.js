@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../utils/UserContext";
+import { Redirect } from "react-router";
 import NavigationBar from "../components/NavigationBar";
 import axios from "axios";
 import { FetchLocations } from "../utils/FetchLocations";
@@ -154,7 +155,7 @@ const Telebot = () => {
     if (userInfo?.telebot === "") {
       return (
         <>
-        <div className="text-center">
+          <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>
               Set up your telebot!
             </h1>
@@ -203,11 +204,11 @@ const Telebot = () => {
             </button>
           </div>
         </>
-      )
+      );
     } else {
-      return(
+      return (
         <>
-        <div className="text-center">
+          <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>
               Update your username!
             </h1>
@@ -248,9 +249,9 @@ const Telebot = () => {
             </button>
           </div>
         </>
-      )
+      );
     }
-  }
+  };
 
   const restOfForm = () => {
     if (teleInfo?.confirmed) {
@@ -407,12 +408,15 @@ const Telebot = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

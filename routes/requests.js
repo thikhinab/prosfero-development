@@ -224,7 +224,7 @@ router.post("/success/:id", async (req, res) => {
 
     p1().then(() =>
       p2().then(async () => {
-        const post = await Post.findById(req.params.id)
+        const post = await Post.findById(req.params.id);
         const oldId = post._id;
         const originalDate = post.updatedAt;
         const title = post.title;

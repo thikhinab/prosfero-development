@@ -289,7 +289,12 @@ router.get("/limited/:limit/:skip", async (req, res) => {
   };
 
   try {
-    const posts = await Post.find().limit(limit).skip(skip).sort(order);
+    const posts = await Post.find({
+      $where: `this.flags.length<${process.env.FLAG_LIMIT}`,
+    })
+      .limit(limit)
+      .skip(skip)
+      .sort(order);
 
     Promise.all(
       posts.map((post) => {
@@ -357,7 +362,7 @@ router.post("/flag/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     const userid = req.user.id;
-    if ( !post.flags.includes(userid) ){
+    if (!post.flags.includes(userid)) {
       try {
         const updatedPost = await Post.findByIdAndUpdate(
           req.params.id,

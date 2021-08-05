@@ -18,12 +18,14 @@ import Chat from "./pages/Chat";
 import YourRequests from "./pages/YourRequests";
 import Telebot from "./pages/Telebot";
 import Archive from "./pages/Archive";
+import Admin from "./pages/Admin";
 
 function App() {
   // Is this fecthing the token in each render??
   const [user, setUser] = useState({
     token: localStorage.getItem("prosfero-token"),
     id: localStorage.getItem("prosfero-id"),
+    admin: localStorage.getItem("prosfero-admin"),
   });
 
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -45,6 +47,7 @@ function App() {
             <Route path="/requests" exact component={YourRequests} />
             <Route path="/telebot" exact component={Telebot} />
             <Route path="/archive" exact component={Archive} />
+            <Route path="/admin" exact component={Admin} />
             <Route path="/search" component={Search} />
             <Route path="/" component={WelcomeRouter} />
           </Switch>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = ({ post, index, archive }) => {
+const Card = ({ post, index, approvePost, deletePost, archive }) => {
   return (
     <div key={index} className="col col-xl-3 col-lg-4 col-md-6 col-sm-12">
       <div className="card h-100">
@@ -40,6 +40,28 @@ const Card = ({ post, index, archive }) => {
           <small className="text-muted">{post.category}</small>
           <hr />
           <p className="card-text">{post.desc}</p>
+          {post.flags && (
+            <>
+              <div class="d-grid gap-2 d-md-block text-center">
+                <button
+                  class="btn btn-success"
+                  type="button"
+                  style={{ margin: "0.5rem" }}
+                  onClick={() => approvePost(post.id)}
+                >
+                  Approve Post
+                </button>
+                <button
+                  class="btn btn-danger"
+                  type="button"
+                  style={{ margin: "0.5rem" }}
+                  onClick={() => deletePost(post.id)}
+                >
+                  Delete Post
+                </button>
+              </div>
+            </>
+          )}
         </div>
         <div className="card-footer">
           <small>{post.username}</small>

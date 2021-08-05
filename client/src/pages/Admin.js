@@ -4,14 +4,15 @@ import NavigationBar from "../components/NavigationBar";
 import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
-import Card from "./../components/Card";
-import Filter from "../components/Filter";
 import "../style/Home.css";
+import Card from "../components/Card";
+import Filter from "../components/Filter";
+import { toast } from "react-toastify";
 
 const LIMIT = 8;
-const BASE_URL = "/api/v1/posts";
+const BASE_URL = "/api/v1/admin";
 
-const Search = () => {
+const Admin = () => {
   const { user, setUser } = useContext(UserContext);
   const [more, setMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -25,40 +26,28 @@ const Search = () => {
     id: "latest",
   });
 
-  const escapeRegExpChars = (text) => {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  };
-
-  const params = new URLSearchParams(document.location.search.substring(1));
-  const query = params.get("q");
+  const instance = axios.create({
+    baseURL: BASE_URL,
+    headers: {
+      Authorization: `Bearer ${user.token}`,
+    },
+  });
 
   const fetchData = () => {
-    const instance = axios.create({
-      baseURL: BASE_URL,
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-
     instance
-      .get(`/filter`, {
+      .get(`/limited/${LIMIT}/${skip}`, {
         params: {
-          q: escapeRegExpChars(query),
-          limit: LIMIT,
-          skip: skip,
           order: parseInt(sortOrder.value),
         },
       })
       .then((res) => {
         if (res.data.length < 8) {
-          console.log(res.data);
           setMore(false);
         }
-        const newState = [...state, ...res.data];
-        setState(newState);
+        setState([...state, ...res.data]);
         setSkip(skip + LIMIT);
         setLoading(false);
-        showResults(filters, newState);
+        showResults(filters, [...state, ...res.data]);
       })
       .catch((err) => alert(err));
   };
@@ -80,14 +69,6 @@ const Search = () => {
   );
 
   useEffect(() => {
-    setState([]);
-    setFilteredList([]);
-    setSkip(0);
-    setMore(true);
-    setLoading(false);
-  }, [query]);
-
-  useEffect(() => {
     loader.current = fetchData;
   }, [fetchData]);
 
@@ -106,15 +87,11 @@ const Search = () => {
     };
   }, [element]);
 
-  if (!user.token || user.expired) {
-    return <Redirect to="/login" />;
-  }
-
-  const showResults = (fil, list) => {
+  const showResults = (fil, newState) => {
     if (fil.length > 0) {
-      setFilteredList(list.filter((post) => fil.includes(post.category)));
+      setFilteredList(newState.filter((post) => fil.includes(post.category)));
     } else {
-      setFilteredList(list);
+      setFilteredList(newState);
     }
   };
 
@@ -127,13 +104,39 @@ const Search = () => {
   const handleOrder = (order) => {
     if (order.value !== setSortOder.value) {
       setSortOder(order);
+      setLoading(false);
+      setMore(true);
       setSkip(0);
       setState([]);
       setFilteredList([]);
-      setLoading(false);
-      setMore(true);
     }
   };
+
+  const approvePost = (id) => {
+    instance
+      .put(`/approve/${id}`)
+      .then((res) => {
+        toast.success(res.data);
+        setState((posts) => posts.filter((post) => id !== post.id));
+        setFilteredList((posts) => posts.filter((post) => id !== post.id));
+      })
+      .catch((err) => toast.error("Approval Error"));
+  };
+
+  const deletePost = (id) => {
+    instance
+      .delete(`/delete/${id}`)
+      .then((res) => {
+        toast.success(res.data);
+        setState((posts) => posts.filter((post) => id !== post.id));
+        setFilteredList((posts) => posts.filter((post) => id !== post.id));
+      })
+      .catch((err) => toast.error("Post failed to delete"));
+  };
+
+  if ((!user.token || user.expired) && user.admin) {
+    return <Redirect to="/login" />;
+  }
 
   return (
     <>
@@ -152,41 +155,50 @@ const Search = () => {
         }}
       />
       <div className="container" style={{ marginTop: "1rem" }}>
-        <div style={{ fontWeight: "bold", paddingBottom: "1rem" }}>
-          <h2>Search Results for "{query}"</h2>
+        <div
+          className="title text-center"
+          style={{ fontFamily: "Dancing Script", fontWeight: "bold" }}
+        >
+          <h1>Admin</h1>
         </div>
         <div className="filter">
           <Filter
-            handleFilters={(filters) => handleFilters(filters)}
+            handleFilters={(filters) => handleFilters(filters, "Category")}
             handleOrder={handleOrder}
             customStyle={state.length === 0 ? { display: "none" } : {}}
           />
         </div>
-        {filteredList.length > 0 ? (
-          <>
-            <div
-              className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4"
-              id="post-container"
-            >
-              {filteredList.map((post, index) => (
-                <Card post={post} index={index} />
-              ))}
-            </div>
-          </>
-        ) : (
-          `Your search "${query}" did not match any listings.`
-        )}
 
-        {!loading && more ? (
-          <div ref={setElement} style={{ padding: "2rem" }}></div>
-        ) : (
-          <div id="footer" style={{ padding: "1rem" }}>
-            {" "}
+        {state.length === 0 && (
+          <div className="text-center" style={{ padding: "1rem" }}>
+            <h4>No Flagged Posts</h4>
           </div>
         )}
+        <div
+          className="col row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4"
+          id="post-container"
+        >
+          {filteredList.length > 0 &&
+            filteredList.map((post, index) => (
+              <Card
+                post={post}
+                index={index}
+                approvePost={approvePost}
+                deletePost={deletePost}
+              />
+            ))}
+
+          {!loading && more ? (
+            <div ref={setElement} style={{ padding: "2rem" }}></div>
+          ) : (
+            <div id="footer" style={{ padding: "1rem" }}>
+              {" "}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
 };
 
-export default Search;
+export default Admin;

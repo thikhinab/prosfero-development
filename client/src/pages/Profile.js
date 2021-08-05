@@ -20,9 +20,9 @@ const Profile = () => {
   const [requests, setRequests] = useState([]);
   const [notifs, setNotifs] = useState([]);
 
-  const url = "api/v1/profile";
-  const reqsurl = "api/v1/requests";
-  const notifsUrl = "api/v1/profile/notifs";
+  const url = "/api/v1/profile";
+  const reqsurl = "/api/v1/requests";
+  const notifsUrl = "/api/v1/profile/notifs";
 
   const fileSelectedHandler = (e) => {
     setFile({
@@ -292,12 +292,15 @@ const Profile = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

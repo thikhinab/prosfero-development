@@ -61,7 +61,12 @@ router.route("/login").post(async (req, res) => {
         // Consider adding expiration
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
-        return res.json({ message: info.message, token, id: user._id });
+        return res.json({
+          message: info.message,
+          token,
+          id: user._id,
+          admin: user.isAdmin,
+        });
       });
     } catch (error) {
       return res.json(error);

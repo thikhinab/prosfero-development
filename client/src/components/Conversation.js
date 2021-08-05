@@ -11,14 +11,11 @@ const Conversation = ({ conversation, currentUser, onCustomClick }) => {
 
     const getUser = async () => {
       try {
-        const res = await axios.get(
-          `api/v1/profile/data/${friendId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.token}`,
-            },
-          }
-        );
+        const res = await axios.get(`/api/v1/profile/data/${friendId}`, {
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+          },
+        });
         setUser(res.data);
       } catch (err) {
         console.log(err);

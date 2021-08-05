@@ -10,7 +10,7 @@ import Filter from "../components/Filter";
 import { toast } from "react-toastify";
 
 const LIMIT = 8;
-const BASE_URL = "api/v1/posts";
+const BASE_URL = "/api/v1/posts";
 
 const Home = () => {
   const { user, setUser } = useContext(UserContext);
@@ -120,12 +120,15 @@ const Home = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

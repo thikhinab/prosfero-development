@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = ({ post, index, approvePost, deletePost, archive, admin }) => {
+const Card = ({ post, index, approvePost, deletePost, archive }) => {
   return (
     <div key={index} className="col col-xl-3 col-lg-4 col-md-6 col-sm-12">
       <div className="card h-100">
@@ -60,9 +60,7 @@ const Card = ({ post, index, approvePost, deletePost, archive, admin }) => {
                   Delete Post
                 </button>
               </div>
-              <div class="text-center">
-                Flag count: {post.flags}
-              </div>
+              <div class="text-center">Flag count: {post.flags}</div>
             </>
           )}
         </div>

@@ -59,9 +59,9 @@ const CreatePost = () => {
 
   const uploadImage = async (e) => {
     e.preventDefault();
-    setUploading(true);
 
-    if (image.file !== null || image.file !== undefined) {
+    if (image.file !== null && image.file !== undefined) {
+      setUploading(true);
       const files = image.file;
       const data = new FormData();
       data.append("file", files);
@@ -77,7 +77,6 @@ const CreatePost = () => {
           setUploading(false);
         })
         .catch((err) => {
-          console.log(err);
           toast.error(err);
         });
     } else {

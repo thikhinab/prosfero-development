@@ -152,7 +152,7 @@ const Home = () => {
         >
           {filteredList.length > 0 &&
             filteredList.map((post, index) => (
-              <Card post={post} index={index} />
+              <Card key={post.id} post={post} index={index} />
             ))}
 
           {!loading && more ? (

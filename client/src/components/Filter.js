@@ -109,12 +109,12 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
                     className="btn-check"
                     name="btnradio"
                     id="latest"
-                    autocomplete="off"
+                    autoComplete="off"
                     value="1"
                     checked={sortOrder.value === "1"}
-                    onChange={handleRadio}
+                    onChange={() => handleRadio}
                   />
-                  <label className="btn btn-outline-primary" for="latest">
+                  <label className="btn btn-outline-primary" htmlFor="latest">
                     Latest Posts first
                   </label>
 
@@ -124,11 +124,11 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
                     name="btnradio"
                     id="oldest"
                     value="-1"
-                    autocomplete="off"
+                    autoComplete="off"
                     checked={sortOrder.value === "-1"}
-                    onChange={handleRadio}
+                    onChange={() => handleRadio}
                   />
-                  <label className="btn btn-outline-primary" for="oldest">
+                  <label className="btn btn-outline-primary" htmlFor="oldest">
                     Oldest Posts first
                   </label>
                 </div>

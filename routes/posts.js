@@ -48,19 +48,19 @@ router.post("/", async (req, res) => {
       level = "Newbie";
     }
 
-    const user2 = await User.findByIdAndUpdate(req.user.id, {
+    await User.findByIdAndUpdate(req.user.id, {
       $set: {
         achievementLevel: level,
         //{ $cond: [ { $gte: [ "$noOfPosts", 5 ] }, "Pro", "Newbie" ] }
       },
     });
-    //console.log(user)
-
+    
+    //Telebot
     let userList = await Categories.findOne(
       { category: category },
       function (err) {
         if (err) {
-          console.log(err);
+          console.log("category error:", err);
         }
       }
     );
@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
     userList.forEach(function (chatid) {
       bot.sendMessage(
         chatid,
-        `A new item has been posted in ${category}. Go check it out at ...`
+        `A new item has been posted in ${category}. Go check it out at prosfero.herokuapp.com/post/${response._doc._id}`
       );
     });
 

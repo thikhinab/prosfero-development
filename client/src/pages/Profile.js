@@ -11,6 +11,7 @@ const Profile = () => {
   let history = useHistory();
 
   const { user, setUser } = useContext(UserContext);
+  const [ submit, setSubmit ] = useState(false)
 
   const [image, setImage] = useState("");
   const [file, setFile] = useState("");
@@ -111,7 +112,7 @@ const Profile = () => {
         setNotifs(res.data);
       })
       .catch((err) => alert(err));
-  }, []);
+  }, [submit]);
 
   // useEffect(() => {
   //     axios.get(reqsurl,
@@ -138,7 +139,7 @@ const Profile = () => {
       .post(`/requests/approve/${reqData[3]}`)
       .then((res) => {
         alert(`The email of the approved user is: ${res.data}`);
-        //setRequests([])
+        setSubmit(bool => !bool)
       })
       .catch((err) => alert(err));
   };
@@ -157,6 +158,7 @@ const Profile = () => {
       .then((res) => {
         alert("The user's request has been declined");
         console.log(res.data);
+        setSubmit(bool => !bool)
       })
       .catch((err) => alert(err));
   };
@@ -220,7 +222,7 @@ const Profile = () => {
       return (
         <div className="card h-100">
           <div className="card-body">
-            <h5 className="card-title">{reqData[0]}</h5> {/*post*/}
+            <h5 className="card-title"><Link to={`/post/${reqData[7]}`}>{reqData[0]}</Link></h5> {/*post*/}
             <h5 className="card-title">{reqData[1]}</h5> {/*user*/}
             <p className="card-text">{reqData[2]}</p> {/*text*/}
           </div>

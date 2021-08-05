@@ -2,6 +2,21 @@ const router = require("express").Router();
 const telebot = require("../models/telebot");
 const botCategory = require("../models/botCategories");
 const User = require("../models/user");
+const Telebot = require("../models/telebot")
+
+//GET TELEBOT DETAILS
+router.get("/", async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const telebot = await Telebot.findOne(
+      {webusername: user.username}
+    )
+    res.status(200).json(telebot)
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "User not found" });
+  }
+});
 
 //SET UP TELE USERNAME
 router.post("/", async (req, res) => {
@@ -17,11 +32,11 @@ router.post("/", async (req, res) => {
     await User.findByIdAndUpdate(
       userid,
       {
-        $set: {telebot: response._doc}
+        $set: {telebot: response._doc._id}
       },
       {new: true}
     );
-    const { _id } = response._doc;
+    const { _id } = response._doc
     res.status(200).json({ id: _id });
   } catch (err) {
     res.status(500).json(err);
@@ -80,13 +95,7 @@ router.put("/", async (req, res) => {
   const userid = req.user.id;
   const category = req.body.category;
   try {
-    const user = await User.findByIdAndUpdate(
-      userid,
-      {
-        $push: { botcategories: category },
-      },
-      { new: true }
-    );
+    const user = await User.findById(userid);
     const username = user.username;
     const teleDetails = await telebot.findOne({ webusername: username });
     const chatid = teleDetails.chatid;
@@ -97,6 +106,13 @@ router.put("/", async (req, res) => {
 
     console.log(userList);
     if (userList.length === 0) {
+      const user = await User.findByIdAndUpdate(
+        userid,
+        {
+          $push: { botcategories: category },
+        },
+        { new: true }
+      );
       await botCategory.findOneAndUpdate(
         {
           category: category,
@@ -143,8 +159,26 @@ router.put("/remove", async (req, res) => {
       );
       res.status(200).json("Removed successfully");
     } else {
-      res.status(200).json("Category not added!");
+      res.status(200).json("Currently not subscribed to this category!");
     }
+  } catch (err) {
+    res.status(500).json(err);
+    console.log(err);
+  }
+});
+
+//SET LOCATION
+router.post("/location", async (req, res) => {
+  try {
+    const userid = req.user.id;
+    await User.findByIdAndUpdate(
+      userid,
+      {
+        $set: {location: req.body.location}
+      },
+      {new: true}
+    );
+    res.status(200).json("Location set!");
   } catch (err) {
     res.status(500).json(err);
     console.log(err);

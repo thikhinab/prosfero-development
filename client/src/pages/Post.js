@@ -23,7 +23,7 @@ const Post = () => {
     setState(newState);
   };
 
-  const formUrl = `api/v1/posts/requests/${postId}`;
+  const formUrl = `/api/v1/posts/requests/${postId}`;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -51,7 +51,7 @@ const Post = () => {
 
   const [showForm, setShowForm] = useState(false);
 
-  const url = `api/v1/posts/single/${postId}`;
+  const url = `/api/v1/posts/single/${postId}`;
 
   useEffect(() => {
     axios
@@ -125,12 +125,14 @@ const Post = () => {
                   <>
                     <div
                       class="btn btn-primary"
+                      style={{margin: '0.5rem'}}
                       onClick={() => setShowForm(!showForm)}
                     >
                       Request
                     </div>
                     <div
                       class="btn btn-danger"
+                      style={{margin: '0.5rem'}}
                       onClick={() => alert("Post flagged")}
                     >
                       Flag
@@ -138,7 +140,7 @@ const Post = () => {
                   </>
                 )}
                 {showForm && (
-                  <div className="mb-3">
+                  <div className="mb-3" style={{paddingTop: '1rem'}}>
                     <label htmlFor="text" className="form-label">
                       Text
                     </label>
@@ -156,6 +158,7 @@ const Post = () => {
                     <button
                       type="submit"
                       className="btn btn-primary"
+                      style={{marginTop: '1rem', marginBottom: '0rem'}}
                       onClick={(e) => onSubmit(e)}
                     >
                       Submit

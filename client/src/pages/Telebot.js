@@ -1,7 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
 import axios from "axios";
+import { FetchLocations } from "../utils/FetchLocations";
+import LocationSelect from "../components/LocationSelect";
+import { toast } from 'react-toastify'
 
 const Telebot = () => {
   const [state, setState] = useState({
@@ -9,12 +12,16 @@ const Telebot = () => {
     category: "",
   });
 
-  const { userInfo, setUserInfo } = useState({})
+  const [ userInfo, setUserInfo ] = useState(null)
+  const [ teleInfo, setTeleInfo] = useState({})
+  const [ submit, setSubmit ] = useState(false)
   const { user, setUser } = useContext(UserContext);
 
-  const url = "api/v1/telebots";
+  const url = "api/v1/telebots/";
   const updateurl = "api/v1/telebots/update";
   const userurl = "api/v1/profile";
+  const rmurl = "api/v1/telebots/remove"
+  const locurl = "api/v1/telebots/location"
 
   const change = (e) => {
     const newState = { ...state };
@@ -30,17 +37,29 @@ const Telebot = () => {
         },
       })
       .then((res) => {
-        //console.log(res.data);
         setUserInfo(res.data);
       })
       .catch((err) => {
-        alert(err);
+        toast.error(err);
       });
-  }, []);
+      axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+      .then((res) => {
+        setTeleInfo(res.data);
+        console.log(res.data, "text")
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, [submit]);
 
-  if (!user.token || user.expired) {
-    return <Redirect to="/login" />;
-  }
+  // if (!user.token || user.expired) {
+  //   return <Redirect to="/login" />;
+  // }
 
   const onUsernameSubmit = (e) => {
     e.preventDefault();
@@ -58,9 +77,10 @@ const Telebot = () => {
         }
       )
       .then((res) => {
-        alert("Telegram Username Registered!");
+        toast.success("Telegram Username Registered!");
+        setSubmit(bool => !bool)
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const onUsernameUpdate = (e) => {
@@ -79,10 +99,10 @@ const Telebot = () => {
         }
       )
       .then((res) => {
-        alert("Telegram Username Updated!");
+        toast.success("Telegram Username Updated!");
         console.log(res)
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.success(err));
   };
 
   const onCategorySubmit = (e) => {
@@ -101,21 +121,37 @@ const Telebot = () => {
         }
       )
       .then((res) => {
-        alert(res.data);
+        toast.success(res.data);
+        setSubmit(bool => !bool)
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
-  const generateCategories = (userInfo) => {
-    return (
-      <>
-      {}
-      </>
-    )
-  }
+  const onCategoryRemove = (e) => {
+    e.preventDefault();
 
-  const usernameForm = (userInfo) => {
-    if (userInfo.telebot === "") {
+    axios
+      .put(
+        rmurl,
+        {
+          category: state.category,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data);
+        setSubmit(bool => !bool)
+      })
+      .catch((err) => toast.error(err));
+  };
+
+  const usernameForm = () => {
+    //console.log(userInfo)
+    if (userInfo?.telebot === "") {
       return (
         <>
         <div className="text-center">
@@ -173,26 +209,18 @@ const Telebot = () => {
         <>
         <div className="text-center">
             <h1 style={{ fontFamily: "Dancing Script" }}>
-              Set up your telebot!
+              Update your username!
             </h1>
           </div>
           <div className="text-left">
             <h8>
-              You have set up your Telegram bot extension and receive
-              notifications whenever a new item is posted!
-            </h8>
-            <br />
-            <br />
-            <h8>
-              To get started go to to @prosferobot and run the
-              /start command.
+              Your account is currently linked with the Telegram username: <b>{teleInfo?.teleusername}</b>
             </h8>
           </div>
           <br />
-          <br />
           <div className="mb-3">
             <h8>
-              If you want to update your telegram username you can do so! All your interested catrgories will 
+              If you want to update your telegram username you can do so! All your interested categories will 
               be copied over. You'll need to run /start again.
             </h8>
             <br />
@@ -216,7 +244,7 @@ const Telebot = () => {
               className="btn btn-primary"
               onClick={(e) => onUsernameUpdate(e)}
             >
-              Submit
+              Update
             </button>
           </div>
         </>
@@ -224,30 +252,14 @@ const Telebot = () => {
     }
   }
 
-  return (
-    <>
-      <NavigationBar
-        loggedin={true}
-        func={() => {
-          localStorage.removeItem("prosfero-token");
-          localStorage.removeItem("prosfero-id");
-          setUser({
-            token: null,
-            id: null,
-          });
-        }}
-      />
-
-      <div className="form-pad">
-        <form className="form-post">
-          { usernameForm(userInfo) }
-        </form>
-      </div>
-      <br />
+  const restOfForm = () => {
+    if (teleInfo?.confirmed) {
+      return (
+      <>
       <div className="container profile">
         Your current <i>Interested</i> categories
         <br />
-        {userInfo.botcategories && userInfo.botcategories.map((cat) =>
+        {userInfo?.botcategories && userInfo?.botcategories.map((cat) =>
          <div>
            {cat}
          </div>
@@ -258,9 +270,9 @@ const Telebot = () => {
         <form className="form-post">
           <div className="mb-3">
             <h8>
-              Add a category to your <i>Interested</i>
+              Add/Remove a category from your <i>Interested</i>
               <br />
-              You will then recieve a notification whenever an item is posted in
+              You will recieve a notification whenever an item is posted in
               that category!
             </h8>
             <br />
@@ -286,13 +298,132 @@ const Telebot = () => {
             <button
               type="submit"
               className="btn btn-primary"
+              style={{margin: '0.5rem'}}
               onClick={(e) => onCategorySubmit(e)}
             >
               Submit
             </button>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              style={{margin: '0.5rem'}}
+              onClick={(e) => onCategoryRemove(e)}
+              >
+              Remove
+            </button>
           </div>
         </form>
       </div>
+      <br/>
+      <div className="form-pad">
+      <form className="form-post">
+      <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Location
+            </label>
+            <LocationSelect
+              loading={loading}
+              requests={getSuggestions}
+              suggestions={suggestions}
+              menuIsOpen={menuIsOpen}
+              onSelect={onSelect}
+              placeholder={"Please type in a location"}
+            />
+        <br/>
+        <div className="text-center">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={(e) => onLocationSubmit(e)}
+            >
+              Submit
+            </button>
+        </div>
+      </div>
+      </form>
+      </div>
+      </>
+      )
+    } else {
+      return(
+      <>
+      <div className="container profile">
+        You need to run /start before you can start adding Categories and Location!
+      </div>
+      </>
+      )
+    }
+  }
+
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [selected, setSelected] = useState({
+    label: "",
+    lon: "",
+    lat: "",
+  });
+
+  const getSuggestions = async (word) => {
+    if (word) {
+      setLoading(true);
+      let response = await FetchLocations(word);
+
+      setSuggestions(response);
+      setLoading(false);
+      setMenuIsOpen(true);
+    } else {
+      setSuggestions([]);
+      setMenuIsOpen(false);
+    }
+  };
+
+  const onSelect = (object) => {
+    setSelected(object);
+  };
+
+  const onLocationSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(
+        locurl,
+        {
+          location: selected,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data);
+      })
+      .catch((err) => toast.error(err));
+  };
+
+  return (
+    <>
+      <NavigationBar
+        loggedin={true}
+        func={() => {
+          localStorage.removeItem("prosfero-token");
+          localStorage.removeItem("prosfero-id");
+          setUser({
+            token: null,
+            id: null,
+          });
+        }}
+      />
+
+      <div className="form-pad">
+        <form className="form-post">
+          { usernameForm() }
+        </form>
+      </div>
+      <br />
+      { restOfForm() }
     </>
   );
 };

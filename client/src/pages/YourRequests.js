@@ -3,9 +3,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
+import { Link } from "react-router-dom";
 
 const YourRequests = () => {
   const [requests, setRequests] = useState([""]);
+  const [submit, setSubmit] = useState(false)
   const { user, setUser } = useContext(UserContext);
   let history = useHistory();
 
@@ -48,7 +50,10 @@ const YourRequests = () => {
     });
     instance
       .post(`/requests/success/${reqData[5]}`)
-      .then(alert("Congatulations!"));
+      .then( () => {
+        alert("Congatulations!")
+        setSubmit(bool => !bool);
+      })
   };
 
   const fail = (e, reqData) => {
@@ -59,7 +64,11 @@ const YourRequests = () => {
         Authorization: `Bearer ${user.token}`,
       },
     });
-    instance.post(`/requests/fail/${reqData[6]}`).then(alert("Oh wells :("));
+    instance.post(`/requests/fail/${reqData[6]}`)
+    .then( () => {
+      alert("Oh wells :(")
+      setSubmit(bool => !bool)
+    });
   };
 
   const startConversation = (receiverId) => {
@@ -89,7 +98,8 @@ const YourRequests = () => {
       return (
         <div className="card h-100">
           <div className="card-body">
-            Your request on <b>{reqData[0]}</b> has been accepted!
+            
+            Your request on <Link to={`/post/${reqData[5]}`}><b>{reqData[0]}</b></Link> has been accepted!
             <br /> Contact them at <b>{reqData[4]}</b>
             <br />
             <br />
@@ -130,7 +140,7 @@ const YourRequests = () => {
       return (
         <div class="col">
           <div class="p-3 border bg-light">
-            You requested <b>{reqData[0]}</b> <br />
+            You requested <Link to={`/post/${reqData[5]}`}><b>{reqData[0]}</b></Link> <br />
             <i> On {new Date(reqData[1]).toUTCString()}</i>
             <br />
             You said:

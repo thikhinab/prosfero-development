@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/user");
 const Post = require("../models/post");
 const Request = require("../models/request");
-const archivedPost = reqiure("../models/archivedpost");
+const archivedPost = require("../models/archivedpost");
 const { request } = require("express");
 
 //CREATE REQUEST
@@ -54,6 +54,7 @@ router.get("/", async (req, res) => {
         contact,
         status,
         userData._id,
+        postData._id
       ];
     };
 
@@ -228,7 +229,7 @@ router.post("/success/:id", async (req, res) => {
         const originalDate = post.updatedAt;
         const title = post.title;
         const desc = post.desc;
-        const userid = post.id;
+        const userid = post.userid;
         const category = post.category;
         const image = post.image;
         const location = {

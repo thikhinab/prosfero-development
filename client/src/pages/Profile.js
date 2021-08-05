@@ -281,6 +281,42 @@ const Profile = () => {
           ></button>
         </div>
       );
+    } else if (notif.status === "down") {
+      return (
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          The listing, <strong>{notif.title}</strong> by{" "}
+          <strong>{notif.username}</strong> was taken down by moderators. Please
+          ignore any previous notifications regarding the post.
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={(e) => closeNotif(e, notif)}
+          ></button>
+        </div>
+      );
+    } else if (notif.status === "deleted") {
+      return (
+        <div
+          class="alert alert-dark alert-dismissible fade show"
+          role="alert"
+        >
+          The listing, <strong>{notif.title}</strong> by{" "}
+          <strong>{notif.username}</strong> was taken down by the user. Please
+          ignore any previous notifications regarding the post.
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={(e) => closeNotif(e, notif)}
+          ></button>
+        </div>
+      );
     }
   };
 

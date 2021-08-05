@@ -90,6 +90,27 @@ const Post = () => {
       .catch((err) => toast.error(err.response.data));
   };
 
+  const deletePost = () => {
+
+    
+
+    const instance = axios.create({
+      baseURL: `/api/v1/admin/delete/${postId}`,
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    instance
+      .delete()
+      .then((res) => {
+        if (res.status == 200) {
+          toast.info("Post deleted!");
+          history.push('/home')
+        }
+      })
+      .catch((err) => toast.error(err.response.data));
+  }
+
   if (!user.token || user.expired) {
     return <Redirect to="/login" />;
   }
@@ -110,7 +131,6 @@ const Post = () => {
           });
         }}
       />
-
       <div className="post">
         <div className="container">
           <div className="row">
@@ -141,9 +161,14 @@ const Post = () => {
               <div className="text-center">
                 {console.log(user.id, state.userid)}
                 {state.userid === user.id ? (
-                  <Link class="btn btn-primary" to={`/editpost/${postId}`}>
+                  <>
+                  <Link class="btn btn-primary" style={{margin: '0.5rem'}} to={`/editpost/${postId}`}>
                     Edit
                   </Link>
+                  <div class="btn btn-danger" style={{margin: '0.5rem'}} onClick={() => deletePost()}>
+                     Delete
+                  </div>
+                  </>
                 ) : (
                   <>
                     <div
@@ -153,7 +178,7 @@ const Post = () => {
                     >
                       Request
                     </div>
-                    <div class="btn btn-danger" onClick={() => flagPost()}>
+                    <div class="btn btn-danger" style={{margin: '0.5rem'}} onClick={() => flagPost()}>
                       Flag
                     </div>
                   </>

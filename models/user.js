@@ -57,6 +57,20 @@ const userSchema = new mongoose.Schema(
         botcategories: {
             type: Array,
             required: false
+        },
+        location: {
+            label: {
+              type: String,
+              required: true,
+            },
+            lat: {
+              type: Number,
+              required: true,
+            },
+            lon: {
+              type: Number,
+              required: true,
+            }
         }
 }, {
         collection: 'users',

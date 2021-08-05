@@ -170,14 +170,21 @@ router.put("/remove", async (req, res) => {
 //SET LOCATION
 router.post("/location", async (req, res) => {
   try {
+    console.log(req.body.location)
     const userid = req.user.id;
-    await User.findByIdAndUpdate(
+    const location = {
+      label: req.body.location.label,
+      lat: Number(req.body.location.lat),
+      lon: Number(req.body.location.lon),
+    };
+    const user = await User.findByIdAndUpdate(
       userid,
       {
-        $set: {location: req.body.location}
+        $set: {location: location}
       },
       {new: true}
     );
+    console.log(user)
     res.status(200).json("Location set!");
   } catch (err) {
     res.status(500).json(err);

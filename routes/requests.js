@@ -203,20 +203,6 @@ router.post("/decline/:id", async (req, res) => {
 router.post("/success/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    // for ( const item of post.requests) {
-
-    //       try {
-    //         const reqs = await declineReq2(item)
-    //         console.log(reqs)
-    //       } catch (err) {
-    //         console.log(err, "you bitch!")
-    //       }
-
-    // }
-    // for (const item of post.requests) {
-    //   reqs = await Request.findByIdAndDelete(item)
-    // }
-
     const p1 = async () =>
       Promise.all(post.requests.map((item) => declineReq(item)));
     const p2 = async () =>

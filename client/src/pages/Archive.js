@@ -121,12 +121,15 @@ const Archive = () => {
     <>
       <NavigationBar
         loggedin={true}
+        admin={user.admin}
         func={() => {
           localStorage.removeItem("prosfero-token");
           localStorage.removeItem("prosfero-id");
+          localStorage.removeItem("prosfero-admin");
           setUser({
             token: null,
             id: null,
+            admin: null,
           });
         }}
       />

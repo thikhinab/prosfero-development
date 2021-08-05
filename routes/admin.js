@@ -69,6 +69,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
   }
 });
 
+//MODERATOR APPROVES POST
 router.put("/approve/:id", async (req, res) => {
   try {
     const post = await Post.findByIdAndUpdate(req.params.id, {
@@ -81,11 +82,59 @@ router.put("/approve/:id", async (req, res) => {
   }
 });
 
+const declineReq = async (id) => {
+  const updatedReq = await Request.findByIdAndUpdate(
+    id,
+    {
+      $set: { status: "down" },
+    },
+    { new: true }
+  );
+  const getData = async (requestid) => {
+    const requestData = await Request.findById(requestid);
+    const postData = await Post.findById(requestData.postid);
+    const userData = await User.findById(postData.userid);
+    const username = userData.username;
+    const postTitle = await postData.title;
+    return {
+      title: postTitle,
+      username: username,
+      status: "down",
+      requestid: requestid,
+    };
+  };
+  const data = await getData(id);
+  const reqId = updatedReq.userid;
+  await User.findByIdAndUpdate(
+    reqId,
+    {
+      $push: { notifications: data },
+    },
+    { new: true }
+  );
+  return data;
+};
+
+//MODERATOR DELETES POST
 router.delete("/delete/:id", async (req, res) => {
   try {
-    const post = await Post.findByIdAndDelete(req.params.id);
-
-    res.status(200).json("Post deleted.");
+    const post = await Post.findById(req.params.id);
+    const p1 = async () =>
+      Promise.all(post.requests.map((item) => declineReq(item)));
+    const p2 = async () =>
+      Promise.all(post.requests.map((item) => Request.findByIdAndDelete(item)));
+      p1().then(() =>
+        p2().then()
+      )
+    await Post.findByIdAndDelete(req.params.id);
+    await User.findByIdAndUpdate(
+      post.userid,
+      {
+        $inc: { noOfPosts: -1 },
+      },
+      { new: true }
+    );
+    res.status(200).json("Post taken down");
   } catch (err) {
     res.status(500).json(err);
   }

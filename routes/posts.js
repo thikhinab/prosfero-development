@@ -3,6 +3,7 @@ const User = require("../models/user");
 const Post = require("../models/post");
 const Request = require("../models/request");
 const Categories = require("../models/botCategories");
+const Telebot = require("../models/telebot");
 const bot = require("../telebot");
 
 //CREATE POST
@@ -55,7 +56,7 @@ router.post("/", async (req, res) => {
       },
     });
     
-    //Telebot
+    //Telebot Categories
     let userList = await Categories.findOne(
       { category: category },
       function (err) {
@@ -70,6 +71,37 @@ router.post("/", async (req, res) => {
         chatid,
         `A new item has been posted in ${category}. Go check it out at prosfero.herokuapp.com/post/${response._doc._id}`
       );
+    });
+
+    //Telebot Location
+    function distance(lat1, lon1, lat2, lon2) {
+      var p = 0.017453292519943295;    // Math.PI / 180
+      var c = Math.cos;
+      var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+              c(lat1 * p) * c(lat2 * p) * 
+              (1 - c((lon2 - lon1) * p))/2;
+    
+      return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    }
+    
+    userList = await User.find()
+    userList.forEach(async function (user) {
+      let chatid = 0
+      let dist = 5
+      if (user.location) {
+        dist = distance(user.location.lat, user.location.lon, 
+          response.location.lat, response.location.lon)
+        let teleInfo = await Telebot.findById(user.telebot)
+        chatid = teleInfo.chatid
+        console.log(dist)
+        console.log(teleInfo)
+      }
+      if (dist < 3) {
+        bot.sendMessage(
+          chatid,
+          `A new item has been posted nearby! Go check it out at prosfero.herokuapp.com/post/${response._doc._id}`
+        );
+      }
     });
 
     const { _id } = response._doc;
@@ -296,7 +328,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
       .skip(skip)
       .sort(order);
 
-    Promise.all(
+      Promise.all(
       posts.map((post) => {
         return getPost(post);
       })
@@ -378,6 +410,66 @@ router.post("/flag/:id", async (req, res) => {
     } else {
       res.status(401).json("You have already flagged this post!");
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+const declineReq = async (id) => {
+  const updatedReq = await Request.findByIdAndUpdate(
+    id,
+    {
+      $set: { status: "deleted" },
+    },
+    { new: true }
+  );
+  const getData = async (requestid) => {
+    const requestData = await Request.findById(requestid);
+    const postData = await Post.findById(requestData.postid);
+    const userData = await User.findById(postData.userid);
+    const username = userData.username;
+    const postTitle = await postData.title;
+    return {
+      title: postTitle,
+      username: username,
+      status: "deleted",
+      requestid: requestid,
+    };
+  };
+  const data = await getData(id);
+  const reqId = updatedReq.userid;
+  const user = await User.findByIdAndUpdate(
+    reqId,
+    {
+      $push: { notifications: data },
+    },
+    { new: true }
+  );
+  return data;
+};
+
+//USER DELETES OWN POST
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $inc: { noOfPosts: -1 },
+      },
+      { new: true }
+    );
+    const p1 = async () =>
+      Promise.all(post.requests.map((item) => declineReq(item)));
+    const p2 = async () =>
+      Promise.all(post.requests.map((item) => Request.findByIdAndDelete(item)));
+
+    p1().then(() =>
+      p2().then(async () => {
+        await Post.findByIdAndDelete(req.params.id);
+        res.status(200).json("Post deleted!");
+      })
+    );
   } catch (err) {
     res.status(500).json(err);
   }

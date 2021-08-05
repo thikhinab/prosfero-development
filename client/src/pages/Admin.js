@@ -134,10 +134,14 @@ const Admin = () => {
       .catch((err) => toast.error("Post failed to delete"));
   };
 
-  if ((!user.token || user.expired) && user.admin) {
-    return <Redirect to="/login" />;
-  }
+ 
 
+  if (!user.token || user.expired) {
+    return <Redirect to="/login" />;
+  } else if (!user.admin) {
+    return <Redirect to="/home" />;
+  } else {
+    console.log(user.admin)
   return (
     <>
       <NavigationBar
@@ -198,7 +202,8 @@ const Admin = () => {
         </div>
       </div>
     </>
-  );
+  
+  );}
 };
 
 export default Admin;

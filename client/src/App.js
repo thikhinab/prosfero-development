@@ -22,10 +22,15 @@ import Admin from "./pages/Admin";
 
 function App() {
   // Is this fecthing the token in each render??
+  const cast = (val) => {
+    if (val==="true") {return true}
+    else {return false}
+  }
+  
   const [user, setUser] = useState({
     token: localStorage.getItem("prosfero-token"),
     id: localStorage.getItem("prosfero-id"),
-    admin: localStorage.getItem("prosfero-admin"),
+    admin: cast(localStorage.getItem("prosfero-admin")),
   });
 
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);

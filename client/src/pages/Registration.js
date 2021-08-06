@@ -48,7 +48,24 @@ const Registration = () => {
       bool = false;
     }
 
-    if (state.password === "") {
+    if (state.password.length > 0) {
+      bool = false;
+      if (state.password.length < 8) {
+        toast.error("Password must have at least 8 characters");
+      }
+
+      if (state.password.search(/[a-z]/i) < 0) {
+        toast.error("Password must contain at least one letter");
+      }
+
+      if (state.password.search(/[0-9]/) < 0) {
+        toast.error("Password must contain at least one number");
+      }
+
+      if (state.password.search(/[!@#$%^&*(),.?":{}|<>]/g) < 0) {
+        toast.error("Password must contain at least one special character");
+      }
+    } else {
       toast.error("Please enter the password");
       bool = false;
     }
@@ -160,6 +177,11 @@ const Registration = () => {
             value={state.password}
             id="registation-password"
           />
+        </div>
+        <div class="form-text" style={{ paddingBottom: "1rem" }}>
+          {
+            "Please use a password with at least 8 characters mixed with letters, numbers and special characters."
+          }
         </div>
         <div className="text-center">
           <button

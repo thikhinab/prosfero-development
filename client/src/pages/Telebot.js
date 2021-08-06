@@ -5,7 +5,7 @@ import NavigationBar from "../components/NavigationBar";
 import axios from "axios";
 import { FetchLocations } from "../utils/FetchLocations";
 import LocationSelect from "../components/LocationSelect";
-import { toast } from 'react-toastify'
+import { toast } from "react-toastify";
 
 const Telebot = () => {
   const [state, setState] = useState({
@@ -13,16 +13,16 @@ const Telebot = () => {
     category: "",
   });
 
-  const [ userInfo, setUserInfo ] = useState(null)
-  const [ teleInfo, setTeleInfo] = useState({})
-  const [ submit, setSubmit ] = useState(false)
+  const [userInfo, setUserInfo] = useState(null);
+  const [teleInfo, setTeleInfo] = useState({});
+  const [submit, setSubmit] = useState(false);
   const { user, setUser } = useContext(UserContext);
 
   const url = "api/v1/telebots/";
   const updateurl = "api/v1/telebots/update";
   const userurl = "api/v1/profile";
-  const rmurl = "api/v1/telebots/remove"
-  const locurl = "api/v1/telebots/location"
+  const rmurl = "api/v1/telebots/remove";
+  const locurl = "api/v1/telebots/location";
 
   const change = (e) => {
     const newState = { ...state };
@@ -43,7 +43,7 @@ const Telebot = () => {
       .catch((err) => {
         toast.error(err);
       });
-      axios
+    axios
       .get(url, {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -51,7 +51,7 @@ const Telebot = () => {
       })
       .then((res) => {
         setTeleInfo(res.data);
-        console.log(res.data, "text")
+        console.log(res.data, "text");
       })
       .catch((err) => {
         toast.error(err);
@@ -65,89 +65,102 @@ const Telebot = () => {
   const onUsernameSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(
-        url,
-        {
-          username: state.username,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (state.username.length > 0) {
+      axios
+        .post(
+          url,
+          {
+            username: state.username,
           },
-        }
-      )
-      .then((res) => {
-        toast.success("Telegram Username Registered!");
-        setSubmit(bool => !bool)
-      })
-      .catch((err) => toast.error(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success("Telegram Username Registered!");
+          setSubmit((bool) => !bool);
+        })
+        .catch((err) => toast.error(err));
+    } else {
+      toast.error("Please enter the Telegram Username");
+    }
   };
 
   const onUsernameUpdate = (e) => {
     e.preventDefault();
-
-    axios
-      .post(
-        updateurl,
-        {
-          username: state.username,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (state.username.length > 0) {
+      axios
+        .post(
+          updateurl,
+          {
+            username: state.username,
           },
-        }
-      )
-      .then((res) => {
-        toast.success("Telegram Username Updated!");
-        console.log(res)
-      })
-      .catch((err) => toast.success(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success("Telegram Username Updated!");
+          console.log(res);
+        })
+        .catch((err) => toast.success(err));
+    } else {
+      toast.error("Please enter the Telegram Username");
+    }
   };
 
   const onCategorySubmit = (e) => {
     e.preventDefault();
-
-    axios
-      .put(
-        url,
-        {
-          category: state.category,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (state.category.length > 0) {
+      axios
+        .put(
+          url,
+          {
+            category: state.category,
           },
-        }
-      )
-      .then((res) => {
-        toast.success(res.data);
-        setSubmit(bool => !bool)
-      })
-      .catch((err) => toast.error(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success(res.data);
+          setSubmit((bool) => !bool);
+        })
+        .catch((err) => toast.error(err));
+    } else {
+      toast.error("Please select a Category");
+    }
   };
 
   const onCategoryRemove = (e) => {
     e.preventDefault();
-
-    axios
-      .put(
-        rmurl,
-        {
-          category: state.category,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (state.category.length > 0) {
+      axios
+        .put(
+          rmurl,
+          {
+            category: state.category,
           },
-        }
-      )
-      .then((res) => {
-        toast.success(res.data);
-        setSubmit(bool => !bool)
-      })
-      .catch((err) => toast.error(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success(res.data);
+          setSubmit((bool) => !bool);
+        })
+        .catch((err) => toast.error(err));
+    } else {
+      toast.error("Please select a Category");
+    }
   };
 
   const usernameForm = () => {
@@ -215,14 +228,16 @@ const Telebot = () => {
           </div>
           <div className="text-left">
             <h8>
-              Your account is currently linked with the Telegram username: <b>{teleInfo?.teleusername}</b>
+              Your account is currently linked with the Telegram username:{" "}
+              <b>{teleInfo?.teleusername}</b>
             </h8>
           </div>
           <br />
           <div className="mb-3">
             <h8>
-              If you want to update your telegram username you can do so! All your interested categories will 
-              be copied over. You'll need to run /start again.
+              If you want to update your telegram username you can do so! All
+              your interested categories will be copied over. You'll need to run
+              /start again.
             </h8>
             <br />
             <br />
@@ -256,105 +271,103 @@ const Telebot = () => {
   const restOfForm = () => {
     if (teleInfo?.confirmed) {
       return (
-      <>
-      <div className="container profile">
-        Your current <i>Interested</i> categories
-        <br />
-        {userInfo?.botcategories && userInfo?.botcategories.map((cat) =>
-         <div>
-           {cat}
-         </div>
-        )}
-      </div>
-      <br />
-      <div className="form-pad">
-        <form className="form-post">
-          <div className="mb-3">
-            <h8>
-              Add/Remove a category from your <i>Interested</i>
-              <br />
-              You will recieve a notification whenever an item is posted in
-              that category!
-            </h8>
+        <>
+          <div className="container profile">
+            Your current <i>Interested</i> categories
             <br />
-            <br />
-            <select
-              className="form-select"
-              name="category"
-              value={state.category}
-              onChange={(e) => change(e)}
-              aria-label="choose chatergory"
-            >
-              <option value="" defaultValue disabled>
-                Choose category
-              </option>
-              <option value="Food">Food</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Stationary">Stationary</option>
-              <option value="Furniture">Furniture</option>
-              <option value="Other">Other</option>
-            </select>
+            {userInfo?.botcategories &&
+              userInfo?.botcategories.map((cat) => <div>{cat}</div>)}
           </div>
-          <div className="text-center">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{margin: '0.5rem'}}
-              onClick={(e) => onCategorySubmit(e)}
-            >
-              Submit
-            </button>
-            <button
-              type="submit"
-              class="btn btn-danger"
-              style={{margin: '0.5rem'}}
-              onClick={(e) => onCategoryRemove(e)}
-              >
-              Remove
-            </button>
+          <br />
+          <div className="form-pad">
+            <form className="form-post">
+              <div className="mb-3">
+                <h8>
+                  Add/Remove a category from your <i>Interested</i>
+                  <br />
+                  You will recieve a notification whenever an item is posted in
+                  that category!
+                </h8>
+                <br />
+                <br />
+                <select
+                  className="form-select"
+                  name="category"
+                  value={state.category}
+                  onChange={(e) => change(e)}
+                  aria-label="choose chatergory"
+                >
+                  <option value="" defaultValue disabled>
+                    Choose category
+                  </option>
+                  <option value="Food">Food</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Stationary">Stationary</option>
+                  <option value="Furniture">Furniture</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ margin: "0.5rem" }}
+                  onClick={(e) => onCategorySubmit(e)}
+                >
+                  Submit
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  style={{ margin: "0.5rem" }}
+                  onClick={(e) => onCategoryRemove(e)}
+                >
+                  Remove
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-      <br/>
-      <div className="form-pad">
-      <form className="form-post">
-      <div className="mb-3">
-            <label htmlFor="description" className="form-label">
-              Location
-            </label>
-            <LocationSelect
-              loading={loading}
-              requests={getSuggestions}
-              suggestions={suggestions}
-              menuIsOpen={menuIsOpen}
-              onSelect={onSelect}
-              placeholder={"Please type in a location"}
-            />
-        <br/>
-        <div className="text-center">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              onClick={(e) => onLocationSubmit(e)}
-            >
-              Submit
-            </button>
-        </div>
-      </div>
-      </form>
-      </div>
-      </>
-      )
+          <br />
+          <div className="form-pad">
+            <form className="form-post">
+              <div className="mb-3">
+                <label htmlFor="description" className="form-label">
+                  Location
+                </label>
+                <LocationSelect
+                  loading={loading}
+                  requests={getSuggestions}
+                  suggestions={suggestions}
+                  menuIsOpen={menuIsOpen}
+                  onSelect={onSelect}
+                  placeholder={"Please type in a location"}
+                />
+                <br />
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={(e) => onLocationSubmit(e)}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </>
+      );
     } else {
-      return(
-      <>
-      <div className="container profile">
-        You need to run /start before you can start adding Categories and Location!
-      </div>
-      </>
-      )
+      return (
+        <>
+          <div className="container profile">
+            You need to run /start before you can start adding Categories and
+            Location!
+          </div>
+        </>
+      );
     }
-  }
+  };
 
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -386,22 +399,26 @@ const Telebot = () => {
   const onLocationSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(
-        locurl,
-        {
-          location: selected,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
+    if (selected.label.length > 0) {
+      axios
+        .post(
+          locurl,
+          {
+            location: selected,
           },
-        }
-      )
-      .then((res) => {
-        toast.success(res.data);
-      })
-      .catch((err) => toast.error(err));
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.success(res.data);
+        })
+        .catch((err) => toast.error(err));
+    } else {
+      toast.error("Please select a Location");
+    }
   };
 
   return (
@@ -422,12 +439,10 @@ const Telebot = () => {
       />
 
       <div className="form-pad">
-        <form className="form-post">
-          { usernameForm() }
-        </form>
+        <form className="form-post">{usernameForm()}</form>
       </div>
       <br />
-      { restOfForm() }
+      {restOfForm()}
     </>
   );
 };

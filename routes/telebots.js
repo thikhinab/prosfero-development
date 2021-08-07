@@ -2,16 +2,14 @@ const router = require("express").Router();
 const telebot = require("../models/telebot");
 const botCategory = require("../models/botCategories");
 const User = require("../models/user");
-const Telebot = require("../models/telebot")
+const Telebot = require("../models/telebot");
 
 //GET TELEBOT DETAILS
 router.get("/", async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    const telebot = await Telebot.findOne(
-      {webusername: user.username}
-    )
-    res.status(200).json(telebot)
+    const telebot = await Telebot.findOne({ webusername: user.username });
+    res.status(200).json(telebot);
   } catch (error) {
     console.log(error);
     res.status(404).json({ message: "User not found" });
@@ -32,11 +30,11 @@ router.post("/", async (req, res) => {
     await User.findByIdAndUpdate(
       userid,
       {
-        $set: {telebot: response._doc._id}
+        $set: { telebot: response._doc._id },
       },
-      {new: true}
+      { new: true }
     );
-    const { _id } = response._doc
+    const { _id } = response._doc;
     res.status(200).json({ id: _id });
   } catch (err) {
     res.status(500).json(err);
@@ -51,20 +49,14 @@ router.post("/update", async (req, res) => {
     const teleusername = req.body.username;
     const user = await User.findById(userid);
     const webusername = user.username;
-    const response = await telebot.findByIdAndUpdate(
-      user.telebot,
-      {
+    const response = await telebot.findByIdAndUpdate(user.telebot, {
       webusername,
       teleusername,
-      }
-    );
-    await telebot.findByIdAndUpdate(
-      user.telebot,
-      {
-        $set: {confirmed: false}
-      }
-    );
-    
+    });
+    await telebot.findByIdAndUpdate(user.telebot, {
+      $set: { confirmed: false },
+    });
+
     const { _id } = response._doc;
     res.status(200).json({ id: _id });
   } catch (err) {
@@ -149,7 +141,6 @@ router.put("/remove", async (req, res) => {
       users: chatid,
     });
 
-    //console.log(userList);
     if (userList.length != 0) {
       await botCategory.findOneAndUpdate(
         {
@@ -170,7 +161,6 @@ router.put("/remove", async (req, res) => {
 //SET LOCATION
 router.post("/location", async (req, res) => {
   try {
-    console.log(req.body.location)
     const userid = req.user.id;
     const location = {
       label: req.body.location.label,
@@ -180,11 +170,10 @@ router.post("/location", async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userid,
       {
-        $set: {location: location}
+        $set: { location: location },
       },
-      {new: true}
+      { new: true }
     );
-    console.log(user)
     res.status(200).json("Location set!");
   } catch (err) {
     res.status(500).json(err);

@@ -28,7 +28,7 @@ const PostSchema = new mongoose.Schema(
     },
     flags: {
       type: Array,
-      required: false
+      required: false,
     },
     location: {
       label: {

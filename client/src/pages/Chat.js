@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useContext, useState, useEffect, useRef } from "react";
 import { Redirect } from "react-router";
+import { UserContext } from "../utils/UserContext";
+import { io } from "socket.io-client";
+import { toast } from 'react-toastify';
 import Conversation from "../components/Conversation";
 import Message from "../components/Message";
 import NavigationBar from "../components/NavigationBar";
-import { UserContext } from "../utils/UserContext";
-import { io } from "socket.io-client";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import "./../style/Chat.css";
@@ -65,7 +66,7 @@ const Chat = () => {
         });
         setConversations(res.data);
       } catch (err) {
-        console.log(err);
+        toast.error(err);
       }
     };
     getConversations();
@@ -81,7 +82,7 @@ const Chat = () => {
         });
         setMessages(res.data);
       } catch (err) {
-        console.log(err);
+        toast.error(err);
       }
     };
     getMessages();
@@ -112,7 +113,7 @@ const Chat = () => {
       setMessages([...messages, res.data]);
       setNewMessage("");
     } catch (err) {
-      console.log(err);
+      toast.error(err);
     }
   };
 
@@ -196,7 +197,7 @@ const Chat = () => {
               })}
             </div>
           </div>
-          <div className="col cxcxchatbox">
+          <div className="col">
             {chatUsername !== "" && (
               <>
                 <h3 style={{ paddingTop: "1rem" }}>{chatUsername}</h3>

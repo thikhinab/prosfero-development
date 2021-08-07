@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 
 const RequestSchema = new mongoose.Schema(
   {
-    postid:{
-        type: String,
-        //required: true
+    postid: {
+      type: String,
     },
     userid: {
       type: String,
@@ -17,12 +16,13 @@ const RequestSchema = new mongoose.Schema(
     status: {
       type: String,
       required: false,
-      default: ""
-    }
+      default: "",
+    },
   },
-  { 
-    collections: 'requests',
-    timestamps: true }
+  {
+    collections: "requests",
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Request", RequestSchema)
+module.exports = mongoose.model("Request", RequestSchema);

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Redirect } from "react-router";
-import { UserContext } from "../utils/UserContext";
 import { useParams, useHistory, Link } from "react-router-dom";
 import axios from "axios";
-import NavigationBar from "../components/NavigationBar";
 import { toast } from "react-toastify";
+import { UserContext } from "../utils/UserContext";
+import NavigationBar from "../components/NavigationBar";
 import "../style/Post.css";
 
 const Post = () => {
@@ -30,25 +30,26 @@ const Post = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const instance = axios.create({
+      baseURL: formUrl,
+      headers:{
+        Authorization: `Bearer ${user.token}`,
+      },
+    })
 
-    axios
+    instance
       .post(
-        formUrl,
+        '',
         {
           text: state.text,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
+        
       )
       .then((res) => {
-        alert("Request submitted!");
+          toast.info('Request submitted!')
       })
       .catch((err) => {
-        err.response && alert(err.response.data);
-        console.log(err);
+        toast.error(err.response.data);
       });
   };
 
@@ -64,13 +65,10 @@ const Post = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
-        console.log(res.data, "fdsfadsfsadfdsfsf");
         setState(res.data);
       })
       .catch((err) => {
-        alert(err);
-        console.log(err, "fdskjf");
+        toast.error(err);
         history.push("/home");
       });
   }, []);
@@ -85,7 +83,7 @@ const Post = () => {
     instance
       .post()
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           toast.info("Post flagged!");
         }
       })
@@ -104,7 +102,7 @@ const Post = () => {
     instance
       .delete()
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           toast.info("Post deleted!");
           history.push("/home");
         }
@@ -205,7 +203,6 @@ const Post = () => {
               <p>Category: {state.category}</p>
               <p>Created at: {new Date(state.createdAt).toUTCString()}</p>
               <div className="text-center">
-                {console.log(user.id, state.userid)}
                 {state.userid === user.id ? (
                   <>
                     <Link

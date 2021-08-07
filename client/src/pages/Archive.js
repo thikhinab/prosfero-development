@@ -48,9 +48,8 @@ const Archive = () => {
         setSkip(skip + LIMIT);
         setLoading(false);
         showResults(filters, [...state, ...res.data]);
-        console.log(res.data, 'fjdksjdfkjsd')
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const loader = useRef(fetchData);

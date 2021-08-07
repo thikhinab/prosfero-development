@@ -5,28 +5,6 @@ const Request = require("../models/request");
 const archivedPost = require("../models/archivedpost");
 const { request } = require("express");
 
-//CREATE REQUEST
-//ISN"T USED
-// router.post("/:id", async (req, res) => {
-//   const postid = req.params.id;
-//   const userid = req.user.id;
-//   const text = req.body.text;
-
-//   try {
-//     const response = await Request.create({
-//       postid,
-//       userid,
-//       text
-//   });
-
-//   res.status(200).json(response);
-
-//   } catch (err) {
-//     res.status(500).json(err);
-//     console.log(err);
-//   }
-// });
-
 //GET INCOMING REQUESTS DATA FOR A USER
 router.get("/", async (req, res) => {
   const userid = req.user.id;
@@ -54,7 +32,7 @@ router.get("/", async (req, res) => {
         contact,
         status,
         userData._id,
-        postData._id
+        postData._id,
       ];
     };
 
@@ -66,6 +44,7 @@ router.get("/", async (req, res) => {
     res.status(200).json(reqsData);
   } catch (err) {
     console.log(err);
+    res.status(500).json(err);
   }
 });
 
@@ -100,7 +79,6 @@ router.post("/", async (req, res) => {
       const data = await getData(request);
       reqsData.push(data);
     }
-    console.log(reqsData);
     res.status(200).json(reqsData);
   } catch (err) {
     console.log(err);
@@ -113,6 +91,7 @@ router.get("/:id", async (req, res) => {
     const request = await Request.findById(req.params.id);
     res.status(200).json(request);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -152,6 +131,7 @@ router.post("/approve/:id", async (req, res) => {
     const email = user.email;
     res.status(200).json(email);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -195,6 +175,7 @@ router.post("/decline/:id", async (req, res) => {
     const data = await declineReq(req.params.id);
     res.status(200).json(data);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -238,6 +219,7 @@ router.post("/success/:id", async (req, res) => {
       })
     );
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -245,9 +227,14 @@ router.post("/success/:id", async (req, res) => {
 //UNSUCCESSFUL TRANSACTION
 router.post("/fail/:id", async (req, res) => {
   try {
-    const request = await Request.findByIdAndDelete(req.params.id);
-    res.status(200);
+    const request = await Request.findById(req.params.id);
+    const id =JSON.stringify(request._id)
+    const post = await Post.findById(request.postid)
+    await post.requests.pull(id)
+    await Request.findByIdAndDelete(req.params.id);
+    res.status(200).json("Interaction successful");
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });

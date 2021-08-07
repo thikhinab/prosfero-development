@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { useHistory, Redirect } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
-import { toast } from "react-toastify";
+import '../style/Login.css'
 
 const Login = () => {
   let history = useHistory();
@@ -28,12 +29,12 @@ const Login = () => {
   const validation = () => {
     let bool = true;
 
-    if (state.username === "") {
+    if (state.username.length === 0) {
       toast.error("Please enter the username");
       bool = false;
     }
 
-    if (state.password === "") {
+    if (state.password.length === 0) {
       toast.error("Please enter the password");
       bool = false;
     }

@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
-import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
+import { toast } from 'react-toastify';
 import Card from "./../components/Card";
 import Filter from "../components/Filter";
 import "../style/Home.css";
@@ -51,7 +51,6 @@ const Search = () => {
       })
       .then((res) => {
         if (res.data.length < 8) {
-          console.log(res.data);
           setMore(false);
         }
         const newState = [...state, ...res.data];
@@ -60,7 +59,7 @@ const Search = () => {
         setLoading(false);
         showResults(filters, newState);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const loader = useRef(fetchData);

@@ -1,13 +1,12 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../utils/UserContext";
-import NavigationBar from "../components/NavigationBar";
-import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
-import "../style/Home.css";
 import Card from "../components/Card";
 import Filter from "../components/Filter";
+import NavigationBar from "../components/NavigationBar";
 import { toast } from "react-toastify";
+import "../style/Home.css";
 
 const LIMIT = 8;
 const BASE_URL = "/api/v1/admin";
@@ -49,7 +48,7 @@ const Admin = () => {
         setLoading(false);
         showResults(filters, [...state, ...res.data]);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.eror(err));
   };
 
   const loader = useRef(fetchData);
@@ -134,76 +133,73 @@ const Admin = () => {
       .catch((err) => toast.error("Post failed to delete"));
   };
 
- 
-
   if (!user.token || user.expired) {
     return <Redirect to="/login" />;
   } else if (!user.admin) {
     return <Redirect to="/home" />;
   } else {
-    console.log(user.admin)
-  return (
-    <>
-      <NavigationBar
-        loggedin={true}
-        admin={user.admin}
-        func={() => {
-          localStorage.removeItem("prosfero-token");
-          localStorage.removeItem("prosfero-id");
-          localStorage.removeItem("prosfero-admin");
-          setUser({
-            token: null,
-            id: null,
-            admin: null,
-          });
-        }}
-      />
-      <div className="container" style={{ marginTop: "1rem" }}>
-        <div
-          className="title text-center"
-          style={{ fontFamily: "Dancing Script", fontWeight: "bold" }}
-        >
-          <h1>Admin</h1>
-        </div>
-        <div className="filter">
-          <Filter
-            handleFilters={(filters) => handleFilters(filters, "Category")}
-            handleOrder={handleOrder}
-            customStyle={state.length === 0 ? { display: "none" } : {}}
-          />
-        </div>
-
-        {state.length === 0 && (
-          <div className="text-center" style={{ padding: "1rem" }}>
-            <h4>No Flagged Posts</h4>
+    return (
+      <>
+        <NavigationBar
+          loggedin={true}
+          admin={user.admin}
+          func={() => {
+            localStorage.removeItem("prosfero-token");
+            localStorage.removeItem("prosfero-id");
+            localStorage.removeItem("prosfero-admin");
+            setUser({
+              token: null,
+              id: null,
+              admin: null,
+            });
+          }}
+        />
+        <div className="container" style={{ marginTop: "1rem" }}>
+          <div
+            className="title text-center"
+            style={{ fontFamily: "Dancing Script", fontWeight: "bold" }}
+          >
+            <h1>Admin</h1>
           </div>
-        )}
-        <div
-          className="col row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4"
-          id="post-container"
-        >
-          {filteredList.length > 0 &&
-            filteredList.map((post, index) => (
-              <Card
-                post={post}
-                index={index}
-                approvePost={approvePost}
-                deletePost={deletePost}
-              />
-            ))}
+          <div className="filter">
+            <Filter
+              handleFilters={(filters) => handleFilters(filters, "Category")}
+              handleOrder={handleOrder}
+              customStyle={state.length === 0 ? { display: "none" } : {}}
+            />
+          </div>
 
-          {!loading && more ? (
-            <div ref={setElement} style={{ padding: "2rem" }}></div>
-          ) : (
-            <div id="footer" style={{ padding: "1rem" }}>
-              {" "}
+          {state.length === 0 && (
+            <div className="text-center" style={{ padding: "1rem" }}>
+              <h4>No Flagged Posts</h4>
             </div>
           )}
+          <div
+            className="col row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4"
+            id="post-container"
+          >
+            {filteredList.length > 0 &&
+              filteredList.map((post, index) => (
+                <Card
+                  post={post}
+                  index={index}
+                  approvePost={approvePost}
+                  deletePost={deletePost}
+                />
+              ))}
+
+            {!loading && more ? (
+              <div ref={setElement} style={{ padding: "2rem" }}></div>
+            ) : (
+              <div id="footer" style={{ padding: "1rem" }}>
+                {" "}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </>
-  
-  );}
+      </>
+    );
+  }
 };
 
 export default Admin;

@@ -1,9 +1,7 @@
-import { Redirect } from 'react-router-dom'
+import { Redirect } from "react-router-dom";
 
 const WelcomeRouter = () => {
+  return <Redirect to="/welcome" />;
+};
 
-    return <Redirect to='/welcome' />
-    
-}
-
-export default WelcomeRouter
+export default WelcomeRouter;

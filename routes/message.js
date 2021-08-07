@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Message = require("../models/message");
 
-// Create Message
+//CREATE MESSAGE
 router.post("/", async (req, res) => {
   const newMessage = new Message(req.body);
 
@@ -9,11 +9,12 @@ router.post("/", async (req, res) => {
     const saveMessage = await newMessage.save();
     res.status(200).json(saveMessage);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
 
-// Get messages
+//GET MESSAGE
 router.get("/:conversationId", async (req, res) => {
   try {
     const messages = await Message.find({
@@ -21,6 +22,7 @@ router.get("/:conversationId", async (req, res) => {
     });
     res.status(200).json(messages);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });

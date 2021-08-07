@@ -2,7 +2,7 @@ const router = require("express").Router();
 let UserModel = require("../models/user");
 require("../auth/auth");
 
-// Get User Profile
+//GET USER PROFILE
 router.get("/", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Udpate user profile
+//UPDATE USER PROFILE
 router.put("/", async (req, res) => {
   try {
     const user = await UserModel.findByIdAndUpdate(req.user.id, {
@@ -27,7 +27,7 @@ router.put("/", async (req, res) => {
   }
 });
 
-//Delete User
+//DELETE USER
 router.delete("/", async (req, res) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.user.id);
@@ -38,7 +38,7 @@ router.delete("/", async (req, res) => {
   }
 });
 
-// Get Notifications
+//GET NOTIFICATIONS
 router.get("/notifs", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
@@ -50,7 +50,7 @@ router.get("/notifs", async (req, res) => {
   }
 });
 
-//Delete Notification
+//DELETE NOTIFI
 router.post("/notifs/:id", async (req, res) => {
   try {
     const user = await UserModel.findByIdAndUpdate(
@@ -67,7 +67,7 @@ router.post("/notifs/:id", async (req, res) => {
   }
 });
 
-// Get User Profile
+//GET OTHER USER DATA
 router.get("/data/:userId", async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.userId);

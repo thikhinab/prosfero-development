@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useHistory, Redirect, Router } from "react-router-dom";
+import { Link, useHistory, Redirect } from "react-router-dom";
+import { toast } from 'react-toastify';
 import NavigationBar from "../components/NavigationBar";
 import { UserContext } from "../utils/UserContext";
 import Person from "@material-ui/icons/Person";
@@ -11,7 +12,7 @@ const Profile = () => {
   let history = useHistory();
 
   const { user, setUser } = useContext(UserContext);
-  const [ submit, setSubmit ] = useState(false)
+  const [submit, setSubmit] = useState(false);
 
   const [image, setImage] = useState("");
   const [file, setFile] = useState("");
@@ -31,7 +32,7 @@ const Profile = () => {
   };
 
   const uploadImage = async () => {
-    if (file.selectedFile !== undefined) {
+    if (file.selectedFile !== undefined && file.selectedFile !== null) {
       const files = file.selectedFile;
       const data = new FormData();
       data.append("file", files);
@@ -52,12 +53,12 @@ const Profile = () => {
             },
             body: JSON.stringify(data),
           })
-            .then((res) => console.log("Profile updated"))
-            .catch((err) => console.log(err));
+            .then((res) => toast.info("Profile updated"))
+            .catch((err) => toast.error(err));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => toast.error(err));
     } else {
-      alert("Please select an Image");
+      toast.error("Please select an Image");
     }
   };
 
@@ -77,6 +78,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    document.body.style.backgroundColor = '#b3e0ff';
     if (user.token !== null)
       axios
         .get(url, {
@@ -88,8 +90,7 @@ const Profile = () => {
           setProfile(res.data);
           setImage(res.data.profilePicture);
         })
-        .catch((err) => alert(err));
-    document.body.style = "background: #b3e0ff;";
+        .catch((err) => toast.error(err));
 
     axios
       .get(reqsurl, {
@@ -100,7 +101,7 @@ const Profile = () => {
       .then((res) => {
         setRequests(res.data);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
 
     axios
       .get(notifsUrl, {
@@ -111,21 +112,8 @@ const Profile = () => {
       .then((res) => {
         setNotifs(res.data);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   }, [submit]);
-
-  // useEffect(() => {
-  //     axios.get(reqsurl,
-  //         {
-  //             headers: {
-  //                 'Authorization': `Bearer ${user.token}`
-  //             }
-  //          }).then( res => {
-  //         setRequests(res.data)
-  //     }).catch(
-  //         err => alert(err)
-  //     )
-  // }, [requests])
 
   const approve = (e, reqData) => {
     e.preventDefault();
@@ -138,10 +126,10 @@ const Profile = () => {
     instance
       .post(`/requests/approve/${reqData[3]}`)
       .then((res) => {
-        alert(`The email of the approved user is: ${res.data}`);
-        setSubmit(bool => !bool)
+        toast.success(`The email of the approved user is: ${res.data}`);
+        setSubmit((bool) => !bool);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const decline = (e, reqData) => {
@@ -152,15 +140,13 @@ const Profile = () => {
         Authorization: `Bearer ${user.token}`,
       },
     });
-    console.log(reqData);
     instance
       .post(`/requests/decline/${reqData[3]}`)
       .then((res) => {
-        alert("The user's request has been declined");
-        console.log(res.data);
-        setSubmit(bool => !bool)
+        toast.info("The user's request has been declined");
+        setSubmit((bool) => !bool);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const closeNotif = (e, notif) => {
@@ -173,10 +159,8 @@ const Profile = () => {
     });
     instance
       .post(`/profile/notifs/${notif.requestid}`)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => alert(err));
+      .then((res) => {})
+      .catch((err) => toast.error(err));
   };
 
   const startConversation = (receiverId) => {
@@ -195,7 +179,7 @@ const Profile = () => {
       .then((res) => {
         history.push("/chat");
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const createReqData = (reqData) => {
@@ -222,24 +206,25 @@ const Profile = () => {
       return (
         <div className="card h-100">
           <div className="card-body">
-            <h5 className="card-title"><Link to={`/post/${reqData[7]}`}>{reqData[0]}</Link></h5> {/*post*/}
+            <h5 className="card-title">
+              <Link to={`/post/${reqData[7]}`}>{reqData[0]}</Link>
+            </h5>{" "}
+            {/*post*/}
             <h5 className="card-title">{reqData[1]}</h5> {/*user*/}
             <p className="card-text">{reqData[2]}</p> {/*text*/}
           </div>
-          <a
-            href="#"
+          <button
             class="btn btn-outline-success"
             onClick={(e) => approve(e, reqData)}
           >
             Approve
-          </a>
-          <a
-            href="#"
+          </button>
+          <button
             class="btn btn-outline-danger"
             onClick={(e) => decline(e, reqData)}
           >
             Decline
-          </a>
+          </button>
         </div>
       );
     }
@@ -301,10 +286,7 @@ const Profile = () => {
       );
     } else if (notif.status === "deleted") {
       return (
-        <div
-          class="alert alert-dark alert-dismissible fade show"
-          role="alert"
-        >
+        <div class="alert alert-dark alert-dismissible fade show" role="alert">
           The listing, <strong>{notif.title}</strong> by{" "}
           <strong>{notif.username}</strong> was taken down by the user. Please
           ignore any previous notifications regarding the post.

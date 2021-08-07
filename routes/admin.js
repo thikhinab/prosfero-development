@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
     posts = await Post.find({ flags: { $size: { $gt: 0 } } });
     res.status(200).json(posts);
   } catch (err) {
+    conosle.log(err);
     res.status(500).json(err);
   }
 });
@@ -50,7 +51,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
     };
     return newPost;
   };
-  /* { flags: { $size: { $gt: 0 } } } */
+
   try {
     const posts = await Post.find({
       $where: `this.flags.length>=${process.env.FLAG_LIMIT}`,
@@ -65,6 +66,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
       })
     ).then((data) => res.status(200).json(data));
   } catch (err) {
+    conosle.log(err);
     res.status(500).json(err);
   }
 });
@@ -78,6 +80,7 @@ router.put("/approve/:id", async (req, res) => {
 
     res.status(200).json("Post approved for Community.");
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -123,9 +126,7 @@ router.delete("/delete/:id", async (req, res) => {
       Promise.all(post.requests.map((item) => declineReq(item)));
     const p2 = async () =>
       Promise.all(post.requests.map((item) => Request.findByIdAndDelete(item)));
-      p1().then(() =>
-        p2().then()
-      )
+    p1().then(() => p2().then());
     await Post.findByIdAndDelete(req.params.id);
     await User.findByIdAndUpdate(
       post.userid,
@@ -136,6 +137,7 @@ router.delete("/delete/:id", async (req, res) => {
     );
     res.status(200).json("Post taken down");
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });

@@ -4,14 +4,15 @@ const archivedPost = require("../models/archivedpost");
 
 //GET ALL OLD POSTS
 router.get("/", async (req, res) => {
-    try {
-      let posts;
-      posts = await archivedPost.find()
-      res.status(200).json(posts);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  });
+  try {
+    let posts;
+    posts = await archivedPost.find();
+    res.status(200).json(posts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
 
 // GET LIMITED NUMBER OF POSTS
 router.get("/limited/:limit/:skip", async (req, res) => {
@@ -24,8 +25,17 @@ router.get("/limited/:limit/:skip", async (req, res) => {
   }
 
   const getPost = async (post) => {
-    const { userid, title, desc, _id, createdAt, category, image, location, originalDate } =
-      post._doc;
+    const {
+      userid,
+      title,
+      desc,
+      _id,
+      createdAt,
+      category,
+      image,
+      location,
+      originalDate,
+    } = post._doc;
     const user = await User.findById(userid);
     const { username, ...rest } = user._doc;
     const newPost = {
@@ -37,15 +47,19 @@ router.get("/limited/:limit/:skip", async (req, res) => {
       category,
       username,
       location,
-      originalDate
+      originalDate,
     };
     return newPost;
   };
 
   try {
-    const posts = await archivedPost.find({
-      userid: req.user.id
-    }).limit(limit).skip(skip).sort(order);
+    const posts = await archivedPost
+      .find({
+        userid: req.user.id,
+      })
+      .limit(limit)
+      .skip(skip)
+      .sort(order);
 
     Promise.all(
       posts.map((post) => {
@@ -58,4 +72,4 @@ router.get("/limited/:limit/:skip", async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router;

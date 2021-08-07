@@ -52,10 +52,9 @@ router.post("/", async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $set: {
         achievementLevel: level,
-        //{ $cond: [ { $gte: [ "$noOfPosts", 5 ] }, "Pro", "Newbie" ] }
       },
     });
-    
+
     //Telebot Categories
     let userList = await Categories.findOne(
       { category: category },
@@ -65,6 +64,8 @@ router.post("/", async (req, res) => {
         }
       }
     );
+    console.log(userList)
+    console.log(category)
     userList = userList.users;
     userList.forEach(function (chatid) {
       bot.sendMessage(
@@ -75,26 +76,29 @@ router.post("/", async (req, res) => {
 
     //Telebot Location
     function distance(lat1, lon1, lat2, lon2) {
-      var p = 0.017453292519943295;    // Math.PI / 180
+      var p = 0.017453292519943295; // Math.PI / 180
       var c = Math.cos;
-      var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-              c(lat1 * p) * c(lat2 * p) * 
-              (1 - c((lon2 - lon1) * p))/2;
-    
+      var a =
+        0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
+
       return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
     }
-    
-    userList = await User.find()
+
+    userList = await User.find();
     userList.forEach(async function (user) {
-      let chatid = 0
-      let dist = 5
+      let chatid = 0;
+      let dist = 5;
       if (user.location) {
-        dist = distance(user.location.lat, user.location.lon, 
-          response.location.lat, response.location.lon)
-        let teleInfo = await Telebot.findById(user.telebot)
-        chatid = teleInfo.chatid
-        console.log(dist)
-        console.log(teleInfo)
+        dist = distance(
+          user.location.lat,
+          user.location.lon,
+          response.location.lat,
+          response.location.lon
+        );
+        let teleInfo = await Telebot.findById(user.telebot);
+        chatid = teleInfo.chatid;
       }
       if (dist < 3) {
         bot.sendMessage(
@@ -209,6 +213,7 @@ router.put("/:id", async (req, res) => {
       res.status(401).json("You can update only your post!");
     }
   } catch (err) {
+    console.log(error)
     res.status(500).json(err);
   }
 });
@@ -235,6 +240,7 @@ router.delete("/:id", async (req, res) => {
       res.status(401).json("You can delete only your post!");
     }
   } catch (err) {
+    console.log(error)
     res.status(500).json(err);
   }
 });
@@ -265,6 +271,7 @@ router.get("/single/:id", async (req, res) => {
 
     getPost(post).then((data) => res.status(200).json(data));
   } catch (err) {
+    console.log(error)
     res.status(500).json(err);
   }
 });
@@ -288,6 +295,7 @@ router.get("/", async (req, res) => {
     }
     res.status(200).json(posts);
   } catch (err) {
+    console.log(error)
     res.status(500).json(err);
   }
 });
@@ -328,7 +336,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
       .skip(skip)
       .sort(order);
 
-      Promise.all(
+    Promise.all(
       posts.map((post) => {
         return getPost(post);
       })
@@ -405,12 +413,14 @@ router.post("/flag/:id", async (req, res) => {
         );
         res.status(200).json(updatedPost);
       } catch (err) {
+        console.log(err)
         res.status(500).json(err);
       }
     } else {
       res.status(401).json("You have already flagged this post!");
     }
   } catch (err) {
+    console.log(err)
     res.status(500).json(err);
   }
 });
@@ -471,6 +481,7 @@ router.delete("/delete/:id", async (req, res) => {
       })
     );
   } catch (err) {
+    console.log(err)
     res.status(500).json(err);
   }
 });

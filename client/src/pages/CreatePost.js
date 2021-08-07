@@ -1,13 +1,13 @@
 import { useContext, useState } from "react";
-import { UserContext } from "../utils/UserContext";
-import NavigationBar from "../components/NavigationBar";
-import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
 import { useHistory } from "react-router-dom";
-import { FetchLocations } from "../utils/FetchLocations";
-import LocationSelect from "../components/LocationSelect";
 import { toast } from "react-toastify";
+import { UserContext } from "../utils/UserContext";
+import { FetchLocations } from "../utils/FetchLocations";
+import NavigationBar from "../components/NavigationBar";
+import LocationSelect from "../components/LocationSelect";
+import "../style/CreatePost.css";
 
 const CreatePost = () => {
   const { user, setUser } = useContext(UserContext);
@@ -51,10 +51,17 @@ const CreatePost = () => {
     setSelected(object);
   };
 
+  const types = ["image/x-png","image/gif","image/jpeg"]
+
   const fileSelectedHandler = (e) => {
-    setImage({
-      file: e.target.files[0],
-    });
+    if (types.includes(e.target.files[0].type)) {
+      setImage({
+        file: e.target.files[0],
+      });
+    } else {
+      toast.error("File type not supported")
+    }
+
   };
 
   const uploadImage = async (e) => {
@@ -93,27 +100,27 @@ const CreatePost = () => {
   const validation = () => {
     let bool = true;
 
-    if (state.title === "") {
+    if (state.title.length === 0) {
       toast.error("Please enter the title");
       bool = false;
     }
 
-    if (state.category === "") {
+    if (state.category.length === 0) {
       toast.error("Please choose a category");
       bool = false;
     }
 
-    if (selected.label === "") {
+    if (selected.label.length === 0) {
       toast.error("Please select a location");
       bool = false;
     }
 
-    if (state.description === "") {
+    if (state.description.length === 0) {
       toast.error("Please enter the description");
       bool = false;
     }
 
-    if (state.image === "") {
+    if (state.image.length === 0) {
       toast.error("Please upload the image");
       bool = false;
     }
@@ -244,6 +251,8 @@ const CreatePost = () => {
               name="image"
               onChange={(e) => fileSelectedHandler(e)}
               id="image"
+              accept="image/*"
+              
             />
             <button
               className="input-group-text"

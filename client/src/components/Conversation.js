@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Person from "@material-ui/icons/Person";
+import {toast} from 'react-toastify';
 import "./../style/Conversation.css";
 
 const Conversation = ({ conversation, currentUser, onCustomClick }) => {
@@ -18,7 +19,7 @@ const Conversation = ({ conversation, currentUser, onCustomClick }) => {
         });
         setUser(res.data);
       } catch (err) {
-        console.log(err);
+        toast.error(err);
       }
     };
     getUser();

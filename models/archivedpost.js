@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const ArchivedPostSchema = new mongoose.Schema(
   {
     oldId: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     originalDate: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     title: {
       type: String,
@@ -30,7 +30,7 @@ const ArchivedPostSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: false
+      required: false,
     },
     location: {
       label: {
@@ -45,11 +45,12 @@ const ArchivedPostSchema = new mongoose.Schema(
         type: Number,
         required: true,
       },
-    }
+    },
   },
-  { 
-    collections: 'archivedPosts',
-    timestamps: true }
+  {
+    collections: "archivedPosts",
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("archivedPost", ArchivedPostSchema)
+module.exports = mongoose.model("archivedPost", ArchivedPostSchema);

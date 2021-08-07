@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../utils/UserContext";
-import { Redirect } from "react-router";
 import NavigationBar from "../components/NavigationBar";
 import axios from "axios";
+import { Redirect } from "react-router";
 import { FetchLocations } from "../utils/FetchLocations";
 import LocationSelect from "../components/LocationSelect";
 import { toast } from "react-toastify";
@@ -51,16 +51,11 @@ const Telebot = () => {
       })
       .then((res) => {
         setTeleInfo(res.data);
-        console.log(res.data, "text");
       })
       .catch((err) => {
         toast.error(err);
       });
   }, [submit]);
-
-  // if (!user.token || user.expired) {
-  //   return <Redirect to="/login" />;
-  // }
 
   const onUsernameSubmit = (e) => {
     e.preventDefault();
@@ -105,7 +100,6 @@ const Telebot = () => {
         )
         .then((res) => {
           toast.success("Telegram Username Updated!");
-          console.log(res);
         })
         .catch((err) => toast.success(err));
     } else {
@@ -164,8 +158,7 @@ const Telebot = () => {
   };
 
   const usernameForm = () => {
-    //console.log(userInfo)
-    if (userInfo?.telebot === "") {
+    if (userInfo?.telebot.length === 0) {
       return (
         <>
           <div className="text-center">
@@ -414,12 +407,17 @@ const Telebot = () => {
         )
         .then((res) => {
           toast.success(res.data);
+          setSubmit((bool) => !bool);
         })
         .catch((err) => toast.error(err));
     } else {
       toast.error("Please select a Location");
     }
   };
+
+  if (!user.token || user.expired) {
+    return <Redirect to="/login" />;
+  }
 
   return (
     <>

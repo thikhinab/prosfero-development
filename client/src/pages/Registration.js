@@ -1,9 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 import { UserContext } from "../utils/UserContext";
 import NavigationBar from "../components/NavigationBar";
-import { toast } from "react-toastify";
+import '../style/Registration.css'
 
 const Registration = () => {
   const { setUser } = useContext(UserContext);
@@ -30,17 +31,17 @@ const Registration = () => {
   const validation = () => {
     let bool = true;
 
-    if (state.firstName === "") {
+    if (state.firstName.length === 0) {
       toast.error("Please enter the First name");
       bool = false;
     }
 
-    if (state.lastName === "") {
+    if (state.lastName.length === 0) {
       toast.error("Please enter the Last name");
       bool = false;
     }
-    if (state.username === "") {
-      toast.error("Please enter the username");
+    if (state.username.length < 3) {
+      toast.error("Please enter the username with at least 3 characters");
       bool = false;
     }
     if (state.email === "@" || !state.email.includes("@")) {
@@ -49,20 +50,23 @@ const Registration = () => {
     }
 
     if (state.password.length > 0) {
-      bool = false;
       if (state.password.length < 8) {
+        bool = false;
         toast.error("Password must have at least 8 characters");
       }
 
       if (state.password.search(/[a-z]/i) < 0) {
+        bool = false;
         toast.error("Password must contain at least one letter");
       }
 
       if (state.password.search(/[0-9]/) < 0) {
+        bool = false;
         toast.error("Password must contain at least one number");
       }
 
       if (state.password.search(/[!@#$%^&*(),.?":{}|<>]/g) < 0) {
+        bool = false;
         toast.error("Password must contain at least one special character");
       }
     } else {
@@ -76,7 +80,7 @@ const Registration = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (validation()) {
+    if (validation()) {   
       axios
         .post(url, {
           firstName: state.firstName,
@@ -86,19 +90,20 @@ const Registration = () => {
           password: state.password,
         })
         .then((res) => {
-          console.log(res.data);
-          alert("User Registered!");
+          toast.success("User Registered!");
           history.push("/login");
+          setState({
+            firstName: "",
+            lastName: "",
+            username: "",
+            email: "",
+            password: "",
+          });
         })
-        .catch((err) => alert(err));
+        .catch((err) => toast.error(err));
 
-      setState({
-        firstName: "",
-        lastName: "",
-        username: "",
-        email: "",
-        password: "",
-      });
+  
+
     }
   };
 
@@ -178,7 +183,7 @@ const Registration = () => {
             id="registation-password"
           />
         </div>
-        <div class="form-text" style={{ paddingBottom: "1rem" }}>
+        <div className="form-text" style={{ paddingBottom: "1rem" }}>
           {
             "Please use a password with at least 8 characters mixed with letters, numbers and special characters."
           }

@@ -67,6 +67,7 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
             {cat.name}
           </label>
         </div>
+
       );
     });
   };

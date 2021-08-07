@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../utils/UserContext";
-import NavigationBar from "../components/NavigationBar";
-import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
 import { useHistory, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import NavigationBar from "../components/NavigationBar";
+import { UserContext } from "../utils/UserContext";
 import LocationSelect from "../components/LocationSelect";
 import { FetchLocations } from "../utils/FetchLocations";
-import { toast } from "react-toastify";
+import "../style/CreatePost.css";
 
 const EditPost = () => {
   const { postId } = useParams();
@@ -71,10 +71,17 @@ const EditPost = () => {
     file: null,
   });
 
+  const types = ["image/x-png","image/gif","image/jpeg"]
+
   const fileSelectedHandler = (e) => {
-    setImage({
-      file: e.target.files[0],
-    });
+    if (types.includes(e.target.files[0].type)) {
+      setImage({
+        file: e.target.files[0],
+      });
+    } else {
+      toast.error("File type not supported")
+    }
+
   };
 
   const uploadImage = async (e) => {
@@ -113,27 +120,27 @@ const EditPost = () => {
   const validation = () => {
     let bool = true;
 
-    if (state.title === "") {
+    if (state.title.length === 0) {
       toast.error("Please enter the title");
       bool = false;
     }
 
-    if (state.category === "") {
+    if (state.category.length === 0) {
       toast.error("Please choose a category");
       bool = false;
     }
 
-    if (state.location?.label === "") {
+    if (state.location?.label.length === 0) {
       toast.error("Please select a location");
       bool = false;
     }
 
-    if (state.desc === "") {
+    if (state.desc.length === 0) {
       toast.error("Please enter the description");
       bool = false;
     }
 
-    if (state.image === "") {
+    if (state.image.length === 0) {
       toast.error("Please upload the image");
       bool = false;
     }
@@ -261,6 +268,7 @@ const EditPost = () => {
               name="image"
               onChange={(e) => fileSelectedHandler(e)}
               id="image"
+              accept="image/*"
             />
             <button
               className="input-group-text"

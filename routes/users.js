@@ -5,7 +5,7 @@ const passport = require("passport");
 const { request } = require("express");
 require("../auth/auth");
 
-// Register User
+//REGISTER USER
 router.route("/register").post(async (req, res) => {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -21,10 +21,11 @@ router.route("/register").post(async (req, res) => {
       email,
       password,
     });
-    console.log("User created sucessfully", response);
+    res.status("200").json({ message: "Account successfully created" });
   } catch (error) {
+    console.log(error)
     if (error.errors) {
-      if (error.errors.username.kind === "minlength") {
+      if (error.errors.username?.kind === "minlength") {
         return res
           .status(400)
           .json("Username should be atleast 3 characters long");
@@ -37,14 +38,13 @@ router.route("/register").post(async (req, res) => {
         return res.json({ message: "Email is already taken" });
       }
     } else {
-      throw error;
+      console.log(error);
+      res.status(500).json(error);
     }
   }
-
-  res.status("200").json({ message: "Account successfully created" });
 });
 
-// Login
+//LOGIN
 router.route("/login").post(async (req, res) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
@@ -69,7 +69,8 @@ router.route("/login").post(async (req, res) => {
         });
       });
     } catch (error) {
-      return res.json(error);
+      console.log(error);
+      res.json(error);
     }
   })(req, res);
 });

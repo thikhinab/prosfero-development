@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
 
 body {
-  background-color: white;
+  background-color: #b3e0ff;
 }
 
 .main {
@@ -26,36 +26,6 @@ body {
 
 .welcome-button {
   margin: 1rem;
-  padding: 1rem;
-}
-
-#login-title {
-  padding: 1rem;
-}
-
-.login-form {
-  background-color: #b3e0ff;
-  margin: auto;
-  margin-top: 2rem;
-  max-width: 20rem;
-  padding: 1rem;
-  border-radius: 1rem;
-  border-style: solid;
-  border-color: white;
-}
-
-.registration-form {
-  background-color: #b3e0ff;
-  margin: auto;
-  margin-top: 2rem;
-  max-width: 20rem;
-  padding: 1rem;
-  border-radius: 1rem;
-  border-style: solid;
-  border-color: white;
-}
-
-#registration-title {
   padding: 1rem;
 }
 

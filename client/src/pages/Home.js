@@ -1,13 +1,12 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { UserContext } from "../utils/UserContext";
-import NavigationBar from "../components/NavigationBar";
-import "../style/CreatePost.css";
 import axios from "axios";
 import { Redirect } from "react-router";
-import "../style/Home.css";
+import { toast } from "react-toastify";
 import Card from "../components/Card";
 import Filter from "../components/Filter";
-import { toast } from "react-toastify";
+import { UserContext } from "../utils/UserContext";
+import NavigationBar from "../components/NavigationBar";
+import "../style/Home.css";
 
 const LIMIT = 8;
 const BASE_URL = "/api/v1/posts";
@@ -49,7 +48,7 @@ const Home = () => {
         setLoading(false);
         showResults(filters, [...state, ...res.data]);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error(err));
   };
 
   const loader = useRef(fetchData);

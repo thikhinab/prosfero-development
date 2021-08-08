@@ -228,9 +228,20 @@ router.post("/success/:id", async (req, res) => {
 router.post("/fail/:id", async (req, res) => {
   try {
     const request = await Request.findById(req.params.id);
-    const id =JSON.stringify(request._id)
-    const post = await Post.findById(request.postid)
-    await post.requests.pull(id)
+    const id = JSON.stringify(request._id);
+    let post = await Post.findById(request.postid)
+    let requests = post.requests
+    requests = requests.filter(
+      (ele) => {
+        return (JSON.stringify(ele) !== id )
+      })
+    post = await Post.findByIdAndUpdate(
+      request.postid,
+      {
+        $set: { requests: requests },
+      },
+      { new: true }
+    );
     await Request.findByIdAndDelete(req.params.id);
     res.status(200).json("Interaction successful");
   } catch (err) {

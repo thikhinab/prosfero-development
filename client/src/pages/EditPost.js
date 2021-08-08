@@ -71,7 +71,7 @@ const EditPost = () => {
     file: null,
   });
 
-  const types = ["image/x-png","image/gif","image/jpeg"]
+  const types = ["image/png", "image/gif", "image/jpeg"];
 
   const fileSelectedHandler = (e) => {
     if (types.includes(e.target.files[0].type)) {
@@ -79,9 +79,10 @@ const EditPost = () => {
         file: e.target.files[0],
       });
     } else {
-      toast.error("File type not supported")
+      toast.error(
+        "File format not supported. Please upload an image of the following formats: PNG, GIF, JPEG"
+      );
     }
-
   };
 
   const uploadImage = async (e) => {

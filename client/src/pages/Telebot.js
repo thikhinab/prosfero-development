@@ -167,24 +167,24 @@ const Telebot = () => {
             </h1>
           </div>
           <div className="text-left">
-            <h8>
+            <span>
               You can set up your Telegram bot extension and receive
               notifications whenever a new item is posted!
-            </h8>
+            </span>
             <br />
             <br />
-            <h8>
+            <span>
               Once you have set up your username go to @prosferobot and run the
               /start command.
-            </h8>
+            </span>
           </div>
           <br />
           <br />
           <div className="mb-3">
-            <h8>
+            <span>
               Enter the Telegram username you want to connect your Prosfero
               account with.
-            </h8>
+            </span>
             <br />
             <br />
             <label htmlFor="title" className="form-label">
@@ -220,18 +220,18 @@ const Telebot = () => {
             </h1>
           </div>
           <div className="text-left">
-            <h8>
+            <span>
               Your account is currently linked with the Telegram username:{" "}
               <b>{teleInfo?.teleusername}</b>
-            </h8>
+            </span>
           </div>
           <br />
           <div className="mb-3">
-            <h8>
+            <span>
               If you want to update your telegram username you can do so! All
               your interested categories will be copied over. You'll need to run
               /start again.
-            </h8>
+            </span>
             <br />
             <br />
             <label htmlFor="title" className="form-label">
@@ -269,18 +269,18 @@ const Telebot = () => {
             Your current <i>Interested</i> categories
             <br />
             {userInfo?.botcategories &&
-              userInfo?.botcategories.map((cat) => <div>{cat}</div>)}
+              userInfo?.botcategories.map((cat) => <div key={cat}>{cat}</div>)}
           </div>
           <br />
           <div className="form-pad">
             <form className="form-post">
               <div className="mb-3">
-                <h8>
+                <span>
                   Add/Remove a category from your <i>Interested</i>
                   <br />
                   You will recieve a notification whenever an item is posted in
                   that category!
-                </h8>
+                </span>
                 <br />
                 <br />
                 <select
@@ -311,7 +311,7 @@ const Telebot = () => {
                 </button>
                 <button
                   type="submit"
-                  class="btn btn-danger"
+                  className="btn btn-danger"
                   style={{ margin: "0.5rem" }}
                   onClick={(e) => onCategoryRemove(e)}
                 >
@@ -324,6 +324,19 @@ const Telebot = () => {
           <div className="form-pad">
             <form className="form-post">
               <div className="mb-3">
+                <span>
+                  Add a location to be notified whenever an item is posted
+                  within 3km!
+                  {userInfo.location?.label && (
+                    <>
+                    <br />
+                      Your current location is: <br />
+                      <b>{userInfo.location.label}</b>
+                    </>
+                  )}
+                </span>
+                <br />
+                <br />
                 <label htmlFor="description" className="form-label">
                   Location
                 </label>
@@ -341,6 +354,7 @@ const Telebot = () => {
                     type="submit"
                     className="btn btn-primary"
                     onClick={(e) => onLocationSubmit(e)}
+                    style={{ marginBottom: "0rem" }}
                   >
                     Submit
                   </button>

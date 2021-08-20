@@ -64,8 +64,8 @@ router.post("/", async (req, res) => {
         }
       }
     );
-    console.log(userList)
-    console.log(category)
+    console.log(userList);
+    console.log(category);
     userList = userList.users;
     userList.forEach(function (chatid) {
       bot.sendMessage(
@@ -213,7 +213,7 @@ router.put("/:id", async (req, res) => {
       res.status(401).json("You can update only your post!");
     }
   } catch (err) {
-    console.log(error)
+    console.log(error);
     res.status(500).json(err);
   }
 });
@@ -240,7 +240,7 @@ router.delete("/:id", async (req, res) => {
       res.status(401).json("You can delete only your post!");
     }
   } catch (err) {
-    console.log(error)
+    console.log(error);
     res.status(500).json(err);
   }
 });
@@ -271,7 +271,7 @@ router.get("/single/:id", async (req, res) => {
 
     getPost(post).then((data) => res.status(200).json(data));
   } catch (err) {
-    console.log(error)
+    console.log(error);
     res.status(500).json(err);
   }
 });
@@ -295,7 +295,7 @@ router.get("/", async (req, res) => {
     }
     res.status(200).json(posts);
   } catch (err) {
-    console.log(error)
+    console.log(error);
     res.status(500).json(err);
   }
 });
@@ -330,7 +330,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
 
   try {
     const posts = await Post.find({
-      $where: `this.flags.length<${process.env.FLAG_LIMIT}`,
+      "flags.0": { $exists: 0 },
     })
       .limit(limit)
       .skip(skip)
@@ -413,14 +413,14 @@ router.post("/flag/:id", async (req, res) => {
         );
         res.status(200).json(updatedPost);
       } catch (err) {
-        console.log(err)
+        console.log(err);
         res.status(500).json(err);
       }
     } else {
       res.status(401).json("You have already flagged this post!");
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -481,7 +481,7 @@ router.delete("/delete/:id", async (req, res) => {
       })
     );
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json(err);
   }
 });

@@ -3,7 +3,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { Redirect } from "react-router";
 import { UserContext } from "../utils/UserContext";
 import { io } from "socket.io-client";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import Conversation from "../components/Conversation";
 import Message from "../components/Message";
 import NavigationBar from "../components/NavigationBar";
@@ -190,7 +190,9 @@ const Chat = () => {
                     <Conversation
                       conversation={c}
                       currentUser={user}
-                      onCustomClick={(name) => setChatUsername(name)}
+                      onCustomClick={(name) => {
+                        setChatUsername(name);
+                      }}
                     />
                   </div>
                 );

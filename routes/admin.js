@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const Post = require("../models/post");
+const Request = require("../models/request");
 
 //GET ALL FLAGGED POSTS
 router.get("/", async (req, res) => {
@@ -54,7 +55,7 @@ router.get("/limited/:limit/:skip", async (req, res) => {
 
   try {
     const posts = await Post.find({
-      $where: `this.flags.length>=${process.env.FLAG_LIMIT}`,
+      "flags.0": { $exists: 1 },
     })
       .limit(limit)
       .skip(skip)

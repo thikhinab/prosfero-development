@@ -67,7 +67,6 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
             {cat.name}
           </label>
         </div>
-
       );
     });
   };
@@ -113,7 +112,7 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
                     autoComplete="off"
                     value="1"
                     checked={sortOrder.value === "1"}
-                    onChange={() => handleRadio}
+                    onChange={(e) => handleRadio(e)}
                   />
                   <label className="btn btn-outline-primary" htmlFor="latest">
                     Latest Posts first
@@ -127,7 +126,7 @@ const Filter = ({ handleFilters, handleOrder, customStyle }) => {
                     value="-1"
                     autoComplete="off"
                     checked={sortOrder.value === "-1"}
-                    onChange={() => handleRadio}
+                    onChange={(e) => handleRadio(e)}
                   />
                   <label className="btn btn-outline-primary" htmlFor="oldest">
                     Oldest Posts first
